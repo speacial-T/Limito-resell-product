@@ -20,7 +20,7 @@ import jakarta.validation.Valid;
 public class ResellProductInternalController {
 
 	@PostMapping("/stock/reserve")
-	public ResponseEntity<Object> reserveStock(List<UUID> stockIds) {
+	public ResponseEntity<Object> reserveStock(@RequestBody List<UUID> stockIds) {
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
@@ -30,7 +30,7 @@ public class ResellProductInternalController {
 	}
 
 	@PostMapping("/stock/cancel")
-	public ResponseEntity<Object> cancelStock(List<UUID> stockIds) {
+	public ResponseEntity<Object> cancelStock(@RequestBody List<UUID> stockIds) {
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
