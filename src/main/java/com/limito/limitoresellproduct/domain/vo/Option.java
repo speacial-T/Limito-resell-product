@@ -1,34 +1,22 @@
-package com.limito.limitoresellproduct.domain.model;
+package com.limito.limitoresellproduct.domain.vo;
 
 import java.util.List;
 import java.util.UUID;
 
-import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
-
 import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "p_resell_product_options")
+@Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Option {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = "option_id")
 	private UUID optionId;
-
-	@Column(name = "product_id", nullable = false)
-	private UUID productId;
 
 	@Column(name = "model_number", nullable = false, length = 50)
 	private String modelNumber;
@@ -48,40 +36,37 @@ public class Option {
 	@Embedded
 	private MinimumPriceStock minimumPriceStock;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "외래키 칼럼명", insertable = false, updatable = false)
-	private Product product;
-
 	public Option(
 		UUID optionId,
-		UUID productId,
 		String modelNumber,
 		String size,
 		String color,
 		String thumbnailUrl,
-		String details
+		String details,
+		MinimumPriceStock minimumPriceStock
 	) {
-		this.optionId = optionId;
-		setProductId(productId);
+		setOptionId(optionId);
 		setModelNumber(modelNumber);
 		setSize(size);
 		setColor(color);
 		setThumbnailUrl(thumbnailUrl);
 		this.details = details;
+		setMinimumPriceStock(minimumPriceStock);
 	}
 
 	public static List<Option> validateOptions(List<Option> options) {
-		options.stream().forEach(option -> {
-			option = new Option(
-				option.optionId,
-				option.productId,
-				option.modelNumber,
-				option.size,
-				option.color,
-				option.thumbnailUrl,
-				option.details);
-		});
-		return options;
+		List<Option> newOptions = options.stream()
+			.map(option -> new Option(
+				option.getOptionId(),
+				option.getModelNumber(),
+				option.getSize(),
+				option.getColor(),
+				option.getThumbnailUrl(),
+				option.getDetails(),
+				option.getMinimumPriceStock()
+			))
+			.toList();
+		return newOptions;
 	}
 
 	public void setOneOption() {
@@ -93,11 +78,11 @@ public class Option {
 		}
 	}
 
-	private void setProductId(UUID productId) {
-		if (productId == null) {
-			throw new IllegalArgumentException("상품ID는 필수입니다.");
+	private void setOptionId(UUID optionId) {
+		if (optionId == null) {
+			optionId = UUID.randomUUID();
 		}
-		this.productId = productId;
+		this.optionId = optionId;
 	}
 
 	private void setModelNumber(String modelNumber) {
@@ -126,5 +111,15 @@ public class Option {
 			throw new IllegalArgumentException("대표 이미지는 필수입니다.");
 		}
 		this.thumbnailUrl = thumbnailUrl;
+	}
+
+	private void setMinimumPriceStock(MinimumPriceStock stock) {
+		if (stock == null) {
+			stock = new MinimumPriceStock(null, null);
+		}
+		this.minimumPriceStock = new MinimumPriceStock(
+			stock.getMinimumPriceStockId(),
+			stock.getMinimumPriceStockPrice()
+		);
 	}
 }
