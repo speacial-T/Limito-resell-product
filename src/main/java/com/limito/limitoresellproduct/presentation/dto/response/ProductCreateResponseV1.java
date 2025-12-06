@@ -3,13 +3,13 @@ package com.limito.limitoresellproduct.presentation.dto.response;
 import java.util.List;
 import java.util.UUID;
 
-import com.limito.limitoresellproduct.domain.model.Option;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
+@Getter
 public class ProductCreateResponseV1 {
 
 	@NotNull
@@ -25,5 +25,22 @@ public class ProductCreateResponseV1 {
 	private UUID categoryId;
 
 	@NotNull
-	private List<Option> options;
+	private List<OptionResponseV1> options;
+
+	public record OptionResponseV1(
+		UUID optionId,
+		String modelNumber,
+		String size,
+		String color,
+		String thumbnailUrl,
+		String details,
+		MinStockResponse minStock
+	) {
+	}
+
+	public record MinStockResponse(
+		UUID stockId,
+		int price
+	) {
+	}
 }

@@ -3,8 +3,6 @@ package com.limito.limitoresellproduct.presentation.dto.request;
 import java.util.List;
 import java.util.UUID;
 
-import com.limito.limitoresellproduct.domain.model.Option;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -22,5 +20,14 @@ public class ProductCreateRequestV1 {
 	private UUID categoryId;
 
 	@NotNull
-	private List<Option> options;
+	private List<OptionRequestV1> options;
+
+	public record OptionRequestV1(
+		String modelNumber,
+		String size,
+		String color,
+		String thumbnailUrl,
+		String details
+	) {
+	}
 }
