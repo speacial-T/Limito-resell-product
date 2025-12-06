@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.limito.common.audit.UserContextHolder;
+import com.limito.common.code.CommonErrorCode;
+import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.application.service.ResellProductService;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
@@ -22,7 +25,15 @@ public class ResellProductController {
 
 	@PostMapping
 	public ResponseEntity<ProductCreateResponseV1> createProduct(@Valid @RequestBody ProductCreateRequestV1 request) {
+		checkRole("ADMIN");
 		ProductCreateResponseV1 response = resellProductService.createProduct(request);
 		return ResponseEntity.ok().body(response);
+	}
+
+	private void checkRole(String expectedRole) {
+		String role = UserContextHolder.get().getRole();
+		if (!role.equals(expectedRole)) {
+			throw new AppException(CommonErrorCode.FORBIDDEN);
+		}
 	}
 }
