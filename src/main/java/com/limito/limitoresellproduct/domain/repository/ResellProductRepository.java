@@ -4,5 +4,5 @@ import com.limito.limitoresellproduct.domain.model.Product;
 
 public interface ResellProductRepository {
 
-	Product save(Product product);
+	Product saveProduct(Product product);
 }
