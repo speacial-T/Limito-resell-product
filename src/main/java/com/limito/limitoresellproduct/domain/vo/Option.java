@@ -3,6 +3,9 @@ package com.limito.limitoresellproduct.domain.vo;
 import java.util.List;
 import java.util.UUID;
 
+import com.limito.common.exception.AppException;
+import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
@@ -87,28 +90,40 @@ public class Option {
 
 	private void setModelNumber(String modelNumber) {
 		if (modelNumber == null || modelNumber.isBlank()) {
-			throw new IllegalArgumentException("모델번호는 필수입니다.");
+			throw new AppException(
+				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
+				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 모델번호는 필수 입력값입니다."
+			);
 		}
 		this.modelNumber = modelNumber;
 	}
 
 	private void setSize(String size) {
 		if (size == null || size.isBlank()) {
-			throw new IllegalArgumentException("사이즈는 필수입니다.");
+			throw new AppException(
+				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
+				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 사이즈는 필수 입력값입니다."
+			);
 		}
 		this.size = size;
 	}
 
 	private void setColor(String color) {
 		if (color == null || color.isBlank()) {
-			throw new IllegalArgumentException("색상는 필수입니다.");
+			throw new AppException(
+				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
+				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 색상는 필수 입력값입니다."
+			);
 		}
 		this.color = color;
 	}
 
 	private void setThumbnailUrl(String thumbnailUrl) {
 		if (thumbnailUrl == null || thumbnailUrl.isBlank()) {
-			throw new IllegalArgumentException("대표 이미지는 필수입니다.");
+			throw new AppException(
+				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
+				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 대표 이미지는 필수 입력값입니다."
+			);
 		}
 		this.thumbnailUrl = thumbnailUrl;
 	}

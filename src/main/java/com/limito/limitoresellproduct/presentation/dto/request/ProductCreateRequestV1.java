@@ -10,16 +10,16 @@ import lombok.Getter;
 @Getter
 public class ProductCreateRequestV1 {
 
-	@NotBlank
+	@NotBlank(message = "상품명은 필수 입력값입니다.")
 	private String productName;
 
-	@NotBlank
+	@NotBlank(message = "브랜드명은 필수 입력값입니다.")
 	private String brandName;
 
-	@NotNull
+	@NotNull(message = "카테고리ID는 필수 입력값입니다.")
 	private UUID categoryId;
 
-	@NotNull
+	@NotNull(message = "상품의 옵션은 적어도 하나 있어야 합니다.")
 	private List<OptionRequestV1> options;
 
 	public record OptionRequestV1(
