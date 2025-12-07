@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.application.service.ResellProductService;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductReadResponseV1;
 
 import jakarta.validation.Valid;
@@ -45,6 +47,15 @@ public class ResellProductController {
 	) {
 		checkAuth();
 		ProductReadResponseV1 response = resellProductService.getProducts(categoryId, pageable);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/{resellProductId}")
+	public ResponseEntity<ProductGetResponseV1> getProduct(
+		@PathVariable @NotNull(message = "") UUID resellProductId
+	) {
+		checkAuth();
+		ProductGetResponseV1 response = resellProductService.getProduct(resellProductId);
 		return ResponseEntity.ok().body(response);
 	}
 
