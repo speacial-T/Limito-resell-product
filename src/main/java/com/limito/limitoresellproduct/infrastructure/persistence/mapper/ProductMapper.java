@@ -11,6 +11,7 @@ import com.limito.limitoresellproduct.domain.vo.Option;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
 
 import jakarta.validation.Valid;
@@ -78,6 +79,41 @@ public class ProductMapper {
 			.price(stock.getPrice())
 			.isDeleted(stock.isDeleted())
 			.sellerId(stock.getSellerId())
+			.build();
+	}
+
+	public static ProductGetResponseV1 toProductGetResponseV1(Product product) {
+
+		List<ProductGetResponseV1.ProductGetResponseOption> mappedOptions = product.getOptions().stream()
+			.map(option -> {
+
+				MinimumPriceStock stock = option.getMinimumPriceStock();
+
+				ProductGetResponseV1.ProductGetResponseMinStock minStockRes = null;
+				if (stock != null) {
+					minStockRes = new ProductGetResponseV1.ProductGetResponseMinStock(
+						stock.getMinimumPriceStockId(),
+						stock.getMinimumPriceStockPrice()
+					);
+				}
+
+				return new ProductGetResponseV1.ProductGetResponseOption(
+					option.getOptionId(),
+					option.getModelNumber(),
+					option.getSize(),
+					option.getColor(),
+					option.getThumbnailUrl(),
+					option.getDetails(),
+					minStockRes
+				);
+			})
+			.toList();
+
+		return ProductGetResponseV1.builder()
+			.productId(product.getProductId())
+			.productName(product.getName())
+			.brandName(product.getBrandName())
+			.options(mappedOptions)
 			.build();
 	}
 }

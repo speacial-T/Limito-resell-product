@@ -46,6 +46,6 @@ public class ResellProductService {
 
 	public ProductGetResponseV1 getProduct(@NotNull(message = "") UUID resellProductId) {
 		Product product = resellProductRepository.findById(resellProductId);
-		return ProductGetResponseV1.of(product);
+		return ProductMapper.toProductGetResponseV1(product);
 	}
 }
