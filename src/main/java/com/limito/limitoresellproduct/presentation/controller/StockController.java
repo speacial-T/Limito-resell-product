@@ -1,0 +1,39 @@
+package com.limito.limitoresellproduct.presentation.controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.limito.common.audit.UserContextHolder;
+import com.limito.common.code.CommonErrorCode;
+import com.limito.common.exception.AppException;
+import com.limito.limitoresellproduct.application.service.ResellStockService;
+import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
+import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequestMapping("/api/v1/resell-product")
+@RequiredArgsConstructor
+public class StockController {
+
+	private final ResellStockService stockService;
+
+	@PostMapping("/stock")
+	public ResponseEntity<StockCreateResponseV1> createProduct(@Valid @RequestBody StockCreateRequestV1 request) {
+		checkRole("USER");
+		StockCreateResponseV1 response = stockService.createStock(request);
+		return ResponseEntity.ok().body(response);
+	}
+
+	private void checkRole(String expectedRole) {
+		String role = UserContextHolder.get().getRole();
+		if (!role.equals(expectedRole)) {
+			throw new AppException(CommonErrorCode.FORBIDDEN);
+		}
+	}
+}
