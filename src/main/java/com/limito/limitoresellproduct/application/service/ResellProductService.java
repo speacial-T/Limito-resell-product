@@ -12,10 +12,12 @@ import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductMapper;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductReadResponseV1;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -40,5 +42,10 @@ public class ResellProductService {
 	public ProductReadResponseV1 getProducts(UUID categoryId, Pageable pageable) {
 		Page<Product> products = resellProductRepository.findAllByCategoryId(categoryId, pageable);
 		return ProductReadResponseV1.of(categoryId, products);
+	}
+
+	public ProductGetResponseV1 getProduct(@NotNull(message = "") UUID resellProductId) {
+		Product product = resellProductRepository.findById(resellProductId);
+		return ProductGetResponseV1.of(product);
 	}
 }
