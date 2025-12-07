@@ -110,9 +110,21 @@ public class Option {
 		if (stock == null) {
 			stock = new MinimumPriceStock(null, null);
 		}
-		this.minimumPriceStock = new MinimumPriceStock(
-			stock.getMinimumPriceStockId(),
-			stock.getMinimumPriceStockPrice()
-		);
+		this.minimumPriceStock = stock;
+	}
+
+	public void changeMinimumPriceStock(MinimumPriceStock newStock) {
+		if (this.minimumPriceStock == null) {
+			this.minimumPriceStock = new MinimumPriceStock(null, null);
+		}
+		if (newStock == null) {
+			newStock = new MinimumPriceStock(null, null);
+		}
+		if (this.minimumPriceStock.getMinimumPriceStockPrice() < 0) {
+			this.minimumPriceStock = newStock;
+		}
+		if (this.minimumPriceStock.getMinimumPriceStockPrice() > newStock.getMinimumPriceStockPrice()) {
+			this.minimumPriceStock = newStock;
+		}
 	}
 }

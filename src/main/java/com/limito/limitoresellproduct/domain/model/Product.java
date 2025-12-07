@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.limito.common.exception.AppException;
+import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.domain.vo.Option;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 
@@ -95,5 +96,13 @@ public class Product {
 			options.get(0).setOneOption();
 		}
 		this.options = options;
+	}
+
+	public void changeMinimumPriceStock(UUID optionId, MinimumPriceStock newStock) {
+		this.options.forEach(option -> {
+			if (option.getOptionId().equals(optionId)) {
+				option.changeMinimumPriceStock(newStock);
+			}
+		});
 	}
 }

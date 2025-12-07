@@ -1,5 +1,7 @@
 package com.limito.limitoresellproduct.infrastructure.persistence.repository;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Repository;
 
 import com.limito.limitoresellproduct.domain.model.Product;
@@ -16,5 +18,10 @@ public class ResellProductRepositoryImpl implements ResellProductRepository {
 	@Override
 	public Product saveProduct(Product product) {
 		return jpaRepository.save(product);
+	}
+
+	@Override
+	public Product findById(UUID productId) {
+		return jpaRepository.findById(productId).orElse(null);
 	}
 }

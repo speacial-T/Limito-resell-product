@@ -5,9 +5,13 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.limito.limitoresellproduct.domain.model.Product;
+import com.limito.limitoresellproduct.domain.model.Stock;
+import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.domain.vo.Option;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
+import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
 
 import jakarta.validation.Valid;
 
@@ -35,6 +39,11 @@ public class ProductMapper {
 		return product;
 	}
 
+	public static Stock toEntity(@Valid StockCreateRequestV1 request) {
+		Stock stock = new Stock(request.getOptionId(), request.getPrice());
+		return stock;
+	}
+
 	public static ProductCreateResponseV1 toProductCreateResponseV1(Product product) {
 		return ProductCreateResponseV1.builder()
 			.productId(product.getProductId())
@@ -55,6 +64,16 @@ public class ProductMapper {
 					)
 				))
 				.toList())
+			.build();
+	}
+
+	public static StockCreateResponseV1 toDto(Stock stock) {
+		return StockCreateResponseV1.builder()
+			.stockId(stock.getStockId())
+			.optionId(stock.getOptionId())
+			.price(stock.getPrice())
+			.isDeleted(stock.isDeleted())
+			.sellerId(stock.getSellerId())
 			.build();
 	}
 }
