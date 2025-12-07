@@ -1,6 +1,5 @@
 package com.limito.limitoresellproduct.domain.vo;
 
-import java.util.List;
 import java.util.UUID;
 
 import com.limito.common.exception.AppException;
@@ -55,21 +54,6 @@ public class Option {
 		setThumbnailUrl(thumbnailUrl);
 		this.details = details;
 		setMinimumPriceStock(minimumPriceStock);
-	}
-
-	public static List<Option> validateOptions(List<Option> options) {
-		List<Option> newOptions = options.stream()
-			.map(option -> new Option(
-				option.getOptionId(),
-				option.getModelNumber(),
-				option.getSize(),
-				option.getColor(),
-				option.getThumbnailUrl(),
-				option.getDetails(),
-				option.getMinimumPriceStock()
-			))
-			.toList();
-		return newOptions;
 	}
 
 	public void setOneOption() {
