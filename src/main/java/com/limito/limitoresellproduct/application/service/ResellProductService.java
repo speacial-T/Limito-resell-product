@@ -27,7 +27,7 @@ public class ResellProductService {
 	public ProductCreateResponseV1 createProduct(@Valid ProductCreateRequestV1 request) {
 		Product product = ProductMapper.toEntity(request);
 		Product savedProduct = resellProductRepository.saveProduct(product);
-		return ProductMapper.toDto(savedProduct);
+		return ProductMapper.toProductCreateResponseV1(savedProduct);
 	}
 
 	@Transactional

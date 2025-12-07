@@ -1,5 +1,6 @@
 package com.limito.limitoresellproduct.presentation.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +28,7 @@ public class StockController {
 	public ResponseEntity<StockCreateResponseV1> createProduct(@Valid @RequestBody StockCreateRequestV1 request) {
 		checkRole("USER");
 		StockCreateResponseV1 response = stockService.createStock(request);
-		return ResponseEntity.ok().body(response);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	private void checkRole(String expectedRole) {

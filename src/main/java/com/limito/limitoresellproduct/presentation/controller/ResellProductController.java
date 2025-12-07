@@ -35,7 +35,7 @@ public class ResellProductController {
 	public ResponseEntity<ProductCreateResponseV1> createProduct(@Valid @RequestBody ProductCreateRequestV1 request) {
 		checkRole("ADMIN");
 		ProductCreateResponseV1 response = resellProductService.createProduct(request);
-		return ResponseEntity.ok().body(response);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@GetMapping

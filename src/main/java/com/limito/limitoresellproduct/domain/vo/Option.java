@@ -1,6 +1,5 @@
 package com.limito.limitoresellproduct.domain.vo;
 
-import java.util.List;
 import java.util.UUID;
 
 import com.limito.common.exception.AppException;
@@ -57,21 +56,6 @@ public class Option {
 		setMinimumPriceStock(minimumPriceStock);
 	}
 
-	public static List<Option> validateOptions(List<Option> options) {
-		List<Option> newOptions = options.stream()
-			.map(option -> new Option(
-				option.getOptionId(),
-				option.getModelNumber(),
-				option.getSize(),
-				option.getColor(),
-				option.getThumbnailUrl(),
-				option.getDetails(),
-				option.getMinimumPriceStock()
-			))
-			.toList();
-		return newOptions;
-	}
-
 	public void setOneOption() {
 		if (this.size.isBlank()) {
 			this.size = "one size";
@@ -100,20 +84,14 @@ public class Option {
 
 	private void setSize(String size) {
 		if (size == null || size.isBlank()) {
-			throw new AppException(
-				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
-				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 사이즈는 필수 입력값입니다."
-			);
+			size = "one size";
 		}
 		this.size = size;
 	}
 
 	private void setColor(String color) {
 		if (color == null || color.isBlank()) {
-			throw new AppException(
-				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
-				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 색상는 필수 입력값입니다."
-			);
+			color = "one color";
 		}
 		this.color = color;
 	}
