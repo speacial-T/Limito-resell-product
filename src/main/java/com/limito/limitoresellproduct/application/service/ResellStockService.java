@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class ResellStockService {
 
 	private final ResellStockRepository resellStockRepository;
+	private final ResellProductService productService;
 
 	public StockCreateResponseV1 createStock(@Valid StockCreateRequestV1 request) {
 		Stock stock = ProductMapper.toEntity(request);
@@ -23,6 +24,14 @@ public class ResellStockService {
 		// TODO optionID 존재 확인
 
 		Stock savedStock = resellStockRepository.saveStock(stock);
+
+		productService.changeMinimumPriceStock(
+			request.getProductId(),
+			savedStock.getOptionId(),
+			savedStock.getStockId(),
+			savedStock.getPrice()
+		);
+
 		return ProductMapper.toDto(savedStock);
 	}
 }

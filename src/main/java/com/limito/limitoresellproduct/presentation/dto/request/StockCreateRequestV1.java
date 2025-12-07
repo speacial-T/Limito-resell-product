@@ -9,6 +9,9 @@ import lombok.Getter;
 @Getter
 public class StockCreateRequestV1 {
 
+	@NotNull(message = "재고 상품ID는 필수 입력값입니다.")
+	private UUID productId;
+
 	@NotNull(message = "재고 옵션 ID는 필수 입력값입니다.")
 	private UUID optionId;
 
