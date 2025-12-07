@@ -2,6 +2,8 @@ package com.limito.limitoresellproduct.infrastructure.persistence.repository;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.limito.limitoresellproduct.domain.model.Product;
@@ -23,5 +25,10 @@ public class ResellProductRepositoryImpl implements ResellProductRepository {
 	@Override
 	public Product findById(UUID productId) {
 		return jpaRepository.findById(productId).orElse(null);
+	}
+
+	@Override
+	public Page<Product> findAllByCategoryId(UUID categoryId, Pageable pageable) {
+		return jpaRepository.findAllByCategoryId(categoryId, pageable);
 	}
 }
