@@ -2,6 +2,8 @@ package com.limito.limitoresellproduct.application.service;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.limito.limitoresellproduct.domain.model.Product;
@@ -10,6 +12,7 @@ import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductMapper;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.ProductReadResponseV1;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -32,5 +35,10 @@ public class ResellProductService {
 		MinimumPriceStock minimumPriceStock = new MinimumPriceStock(stockId, price);
 		Product product = resellProductRepository.findById(productId);
 		product.changeMinimumPriceStock(optionId, minimumPriceStock);
+	}
+
+	public ProductReadResponseV1 getProducts(UUID categoryId, Pageable pageable) {
+		Page<Product> products = resellProductRepository.findAllByCategoryId(categoryId, pageable);
+		return ProductReadResponseV1.of(categoryId, products);
 	}
 }
