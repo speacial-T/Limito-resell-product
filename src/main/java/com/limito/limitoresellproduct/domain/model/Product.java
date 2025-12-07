@@ -95,8 +95,7 @@ public class Product {
 		if (options.size() == 1) {
 			options.get(0).setOneOption();
 		}
-		List<Option> newOptions = Option.validateOptions(options);
-		this.options = newOptions;
+		this.options = options;
 	}
 
 	public void changeMinimumPriceStock(UUID optionId, MinimumPriceStock newStock) {

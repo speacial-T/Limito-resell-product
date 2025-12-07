@@ -44,7 +44,7 @@ public class ProductMapper {
 		return stock;
 	}
 
-	public static ProductCreateResponseV1 toDto(Product product) {
+	public static ProductCreateResponseV1 toProductCreateResponseV1(Product product) {
 		return ProductCreateResponseV1.builder()
 			.productId(product.getProductId())
 			.productName(product.getName())
@@ -58,17 +58,13 @@ public class ProductMapper {
 					o.getColor(),
 					o.getThumbnailUrl(),
 					o.getDetails(),
-					toDto(o.getMinimumPriceStock())
+					new ProductCreateResponseV1.MinStockResponse(
+						o.getMinimumPriceStock().getMinimumPriceStockId(),
+						o.getMinimumPriceStock().getMinimumPriceStockPrice()
+					)
 				))
 				.toList())
 			.build();
-	}
-
-	public static ProductCreateResponseV1.MinStockResponse toDto(MinimumPriceStock stock) {
-		return new ProductCreateResponseV1.MinStockResponse(
-			stock.getMinimumPriceStockId(),
-			stock.getMinimumPriceStockPrice()
-		);
 	}
 
 	public static StockCreateResponseV1 toDto(Stock stock) {

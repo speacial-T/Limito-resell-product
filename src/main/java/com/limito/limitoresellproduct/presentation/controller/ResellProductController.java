@@ -1,5 +1,6 @@
 package com.limito.limitoresellproduct.presentation.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +28,7 @@ public class ResellProductController {
 	public ResponseEntity<ProductCreateResponseV1> createProduct(@Valid @RequestBody ProductCreateRequestV1 request) {
 		checkRole("ADMIN");
 		ProductCreateResponseV1 response = resellProductService.createProduct(request);
-		return ResponseEntity.ok().body(response);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	private void checkRole(String expectedRole) {
