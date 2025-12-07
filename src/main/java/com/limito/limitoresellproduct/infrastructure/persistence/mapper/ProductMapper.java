@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.limito.limitoresellproduct.domain.model.Product;
-import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.domain.vo.Option;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
@@ -36,7 +35,7 @@ public class ProductMapper {
 		return product;
 	}
 
-	public static ProductCreateResponseV1 toDto(Product product) {
+	public static ProductCreateResponseV1 toProductCreateResponseV1(Product product) {
 		return ProductCreateResponseV1.builder()
 			.productId(product.getProductId())
 			.productName(product.getName())
@@ -50,16 +49,12 @@ public class ProductMapper {
 					o.getColor(),
 					o.getThumbnailUrl(),
 					o.getDetails(),
-					toDto(o.getMinimumPriceStock())
+					new ProductCreateResponseV1.MinStockResponse(
+						o.getMinimumPriceStock().getMinimumPriceStockId(),
+						o.getMinimumPriceStock().getMinimumPriceStockPrice()
+					)
 				))
 				.toList())
 			.build();
-	}
-
-	public static ProductCreateResponseV1.MinStockResponse toDto(MinimumPriceStock stock) {
-		return new ProductCreateResponseV1.MinStockResponse(
-			stock.getMinimumPriceStockId(),
-			stock.getMinimumPriceStockPrice()
-		);
 	}
 }
