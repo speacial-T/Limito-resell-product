@@ -100,20 +100,14 @@ public class Option {
 
 	private void setSize(String size) {
 		if (size == null || size.isBlank()) {
-			throw new AppException(
-				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
-				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 사이즈는 필수 입력값입니다."
-			);
+			size = "one size";
 		}
 		this.size = size;
 	}
 
 	private void setColor(String color) {
 		if (color == null || color.isBlank()) {
-			throw new AppException(
-				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
-				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 색상는 필수 입력값입니다."
-			);
+			color = "one color";
 		}
 		this.color = color;
 	}
