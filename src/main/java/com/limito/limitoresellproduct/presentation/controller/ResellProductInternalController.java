@@ -16,6 +16,8 @@ import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.application.service.ResellStockService;
 import com.limito.limitoresellproduct.presentation.dto.request.StockReduceRequest;
 import com.limito.limitoresellproduct.presentation.dto.request.StockRollbackRequest;
+import com.limito.limitoresellproduct.presentation.dto.response.InternalResponse;
+import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReserveResponseV1;
 
 import jakarta.validation.Valid;
@@ -29,24 +31,17 @@ public class ResellProductInternalController {
 	private final ResellStockService resellStockService;
 
 	@PostMapping("/reserve")
-	public ResponseEntity<StockReserveResponseV1> reserveStock(@RequestBody List<UUID> stockIds) {
+	public ResponseEntity<InternalResponse> reserveStock(@RequestBody List<UUID> stockIds) {
 		// checkRole("USER");
 		StockReserveResponseV1 response = resellStockService.reserveStocks(stockIds);
-		if (response == null) {
-			return ResponseEntity.status(HttpStatus.OK).body(null);
-		}
-		if (response.getErrorCode().equals("E001")) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-		}
-		if (response.getErrorCode().equals("E002")) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-		}
-		return null;
+		return makeResponseWithHttpStatus(response);
 	}
 
 	@PostMapping("/reduce")
-	public ResponseEntity<Object> reduceStock(@Valid @RequestBody List<StockReduceRequest> request) {
-		return ResponseEntity.status(HttpStatus.OK).body(null);
+	public ResponseEntity<InternalResponse> reduceStock(@Valid @RequestBody List<StockReduceRequest> request) {
+		checkRole("USER");
+		StockReduceResponseV1 response = resellStockService.reduceStocks(request);
+		return makeResponseWithHttpStatus(response);
 	}
 
 	@PostMapping("/cancel")
@@ -64,5 +59,18 @@ public class ResellProductInternalController {
 		if (!role.equals(expectedRole)) {
 			throw new AppException(CommonErrorCode.FORBIDDEN);
 		}
+	}
+
+	private ResponseEntity<InternalResponse> makeResponseWithHttpStatus(InternalResponse response) {
+		if (response == null) {
+			return ResponseEntity.status(HttpStatus.OK).body(null);
+		}
+		if (response.getErrorCode().equals("E001")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+		if (response.getErrorCode().equals("E002")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+		return null;
 	}
 }
