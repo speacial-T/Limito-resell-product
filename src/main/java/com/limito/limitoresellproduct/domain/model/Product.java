@@ -3,6 +3,7 @@ package com.limito.limitoresellproduct.domain.model;
 import java.util.List;
 import java.util.UUID;
 
+import com.limito.common.audit.BaseEntity;
 import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.domain.vo.Option;
@@ -26,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "p_resell_products")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Product {
+public class Product extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
