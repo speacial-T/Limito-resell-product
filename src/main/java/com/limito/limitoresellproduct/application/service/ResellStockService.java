@@ -6,13 +6,18 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.limito.limitoresellproduct.domain.model.Stock;
+import com.limito.limitoresellproduct.domain.model.Stocks;
 import com.limito.limitoresellproduct.domain.repository.ResellStockRepository;
 import com.limito.limitoresellproduct.domain.repository.StockInMemoryRepository;
 import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductMapper;
+import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
+import com.limito.limitoresellproduct.presentation.dto.request.StockReduceRequest;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReserveResponseV1;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +29,7 @@ public class ResellStockService {
 	private final ResellStockRepository resellStockRepository;
 	private final StockInMemoryRepository stockInMemoryRepository;
 
-	private static final String REDIS_STOCK_PREFIX_KEY = "resell-stock";
+	private static final String REDIS_STOCK_PREFIX_KEY = "resell-stock:";
 
 	public StockCreateResponseV1 createStock(@Valid StockCreateRequestV1 request) {
 		Stock stock = ProductMapper.toEntity(request);
@@ -36,7 +41,7 @@ public class ResellStockService {
 		productService.changeMinimumPriceStock(
 			request.getProductId(),
 			savedStock.getOptionId(),
-			savedStock.getStockId(),
+			savedStock.getId(),
 			savedStock.getPrice()
 		);
 
@@ -71,5 +76,76 @@ public class ResellStockService {
 
 		stockInMemoryRepository.set(REDIS_STOCK_PREFIX_KEY + stockId, "1");
 		return null;
+	}
+
+	@Transactional
+	public StockReduceResponseV1 reduceStocks(@Valid List<StockReduceRequest> requests) {
+		StockReduceResponseV1 result = null;
+		ProductErrorCode failReason = null;
+
+		for (StockReduceRequest request : requests) {
+			failReason = reduceStock(request);
+		}
+
+		if (failReason != null) {
+			List<UUID> stockIds = requests.stream()
+				.map(StockReduceRequest::getStockId)
+				.toList();
+			result = ProductMapper.toStockReduceResponseV1(failReason, stockIds);
+		}
+
+		return result;
+	}
+
+	private ProductErrorCode reduceStock(StockReduceRequest request) {
+		UUID stockId = request.getStockId();
+		UUID optionId = request.getOptionId();
+		UUID productId = request.getProductId();
+		ProductErrorCode failReason = null;
+
+		failReason = deleteReservedStock(stockId);
+		if (failReason != null) {
+			return failReason;
+		}
+
+		failReason = deleteStock(stockId);
+		if (failReason != null) {
+			return failReason;
+		}
+
+		refreshMinStockOfOption(productId, optionId);
+		return failReason;
+	}
+
+	private ProductErrorCode deleteReservedStock(UUID stockId) {
+		String key = REDIS_STOCK_PREFIX_KEY + stockId;
+
+		String reservedStock = stockInMemoryRepository.get(key);
+		if (reservedStock == null) {
+			return ProductErrorCode.WRONG_ID;
+		}
+
+		stockInMemoryRepository.delete(key);
+		return null;
+	}
+
+	private ProductErrorCode deleteStock(UUID stockId) {
+		Stock stock = resellStockRepository.findById(stockId);
+		if (stock == null) {
+			return ProductErrorCode.WRONG_ID;
+		}
+
+		if (stock.isDeleted()) {
+			return ProductErrorCode.OUT_OF_STOCK;
+		}
+
+		resellStockRepository.deleteStock(stock);
+		return null;
+	}
+
+	private void refreshMinStockOfOption(UUID productId, UUID optionId) {
+		List<Stock> stocks = resellStockRepository.findAllByOptionId(optionId);
+		Stock minStock = Stocks.calculateMinStock(stocks);
+		productService.changeMinimumPriceStock(productId, optionId, minStock.getId(), minStock.getPrice());
 	}
 }
