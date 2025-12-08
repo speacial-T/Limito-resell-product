@@ -33,17 +33,17 @@ public class ResellProductService {
 	@Transactional
 	public void changeMinimumPriceStock(UUID productId, UUID optionId, UUID stockId, int price) {
 		MinimumPriceStock minimumPriceStock = new MinimumPriceStock(stockId, price);
-		Product product = resellProductRepository.findById(productId);
+		Product product = resellProductRepository.findByIdForAllUser(productId);
 		product.changeMinimumPriceStock(optionId, minimumPriceStock);
 	}
 
 	public ProductReadResponseV1 getProducts(UUID categoryId, Pageable pageable) {
-		Page<Product> products = resellProductRepository.findAllByCategoryId(categoryId, pageable);
+		Page<Product> products = resellProductRepository.findAllByCategoryIdForAllUser(categoryId, pageable);
 		return ProductReadResponseV1.of(categoryId, products);
 	}
 
 	public ProductGetResponseV1 getProduct(UUID resellProductId) {
-		Product product = resellProductRepository.findById(resellProductId);
+		Product product = resellProductRepository.findByIdForAllUser(resellProductId);
 		return ProductMapper.toProductGetResponseV1(product);
 	}
 }

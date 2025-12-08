@@ -11,7 +11,7 @@ public interface ResellProductRepository {
 
 	Product saveProduct(Product product);
 
-	Product findById(UUID productId);
+	Product findByIdForAllUser(UUID productId);
 
-	Page<Product> findAllByCategoryId(UUID categoryId, Pageable pageable);
+	Page<Product> findAllByCategoryIdForAllUser(UUID categoryId, Pageable pageable);
 }
