@@ -10,32 +10,59 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.limito.common.audit.UserContextHolder;
+import com.limito.common.code.CommonErrorCode;
+import com.limito.common.exception.AppException;
+import com.limito.limitoresellproduct.application.service.ResellStockService;
 import com.limito.limitoresellproduct.presentation.dto.request.StockReduceRequest;
 import com.limito.limitoresellproduct.presentation.dto.request.StockRollbackRequest;
+import com.limito.limitoresellproduct.presentation.dto.response.StockReserveResponseV1;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/internal/v1/resell-products")
+@RequestMapping("/internal/v1/resell-products/stock")
+@RequiredArgsConstructor
 public class ResellProductInternalController {
 
-	@PostMapping("/stock/reserve")
-	public ResponseEntity<Object> reserveStock(@RequestBody List<UUID> stockIds) {
-		return ResponseEntity.status(HttpStatus.OK).body(null);
+	private final ResellStockService resellStockService;
+
+	@PostMapping("/reserve")
+	public ResponseEntity<StockReserveResponseV1> reserveStock(@RequestBody List<UUID> stockIds) {
+		// checkRole("USER");
+		StockReserveResponseV1 response = resellStockService.reserveStocks(stockIds);
+		if (response == null) {
+			return ResponseEntity.status(HttpStatus.OK).body(null);
+		}
+		if (response.getErrorCode().equals("E001")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+		if (response.getErrorCode().equals("E002")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+		return null;
 	}
 
-	@PostMapping("/stock/reduce")
+	@PostMapping("/reduce")
 	public ResponseEntity<Object> reduceStock(@Valid @RequestBody List<StockReduceRequest> request) {
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
-	@PostMapping("/stock/cancel")
+	@PostMapping("/cancel")
 	public ResponseEntity<Object> cancelStock(@RequestBody List<UUID> stockIds) {
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
-	@PostMapping("/stock/rollback")
+	@PostMapping("/rollback")
 	public ResponseEntity<Object> rollbackStock(@Valid @RequestBody List<StockRollbackRequest> request) {
 		return ResponseEntity.status(HttpStatus.OK).body(null);
+	}
+
+	private void checkRole(String expectedRole) {
+		String role = UserContextHolder.get().getRole();
+		if (!role.equals(expectedRole)) {
+			throw new AppException(CommonErrorCode.FORBIDDEN);
+		}
 	}
 }
