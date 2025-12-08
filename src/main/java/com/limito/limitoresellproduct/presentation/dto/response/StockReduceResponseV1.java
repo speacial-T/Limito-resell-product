@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Builder
-public class StockReserveResponseV1 implements InternalResponse {
+public class StockReduceResponseV1 implements InternalResponse {
 
 	private String errorCode;
 
@@ -17,5 +17,4 @@ public class StockReserveResponseV1 implements InternalResponse {
 
 	@Setter
 	private List<UUID> stockIds;
-
 }
