@@ -1,5 +1,6 @@
 package com.limito.limitoresellproduct.infrastructure.persistence.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
@@ -23,5 +24,15 @@ public class ResellStockRepositoryImpl implements ResellStockRepository {
 	@Override
 	public Stock findById(UUID stockId) {
 		return jpaRepository.findById(stockId).orElse(null);
+	}
+
+	@Override
+	public void deleteStock(Stock stock) {
+		jpaRepository.delete(stock);
+	}
+
+	@Override
+	public List<Stock> findAllByOptionId(UUID optionId) {
+		return jpaRepository.findAllByOptionId(optionId);
 	}
 }
