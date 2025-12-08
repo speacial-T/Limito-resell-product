@@ -78,4 +78,9 @@ public class Stock extends BaseEntity {
 		}
 		this.sellerId = userId.get();
 	}
+
+	public void delete() {
+		softDelete();
+		isDeleted = true;
+	}
 }

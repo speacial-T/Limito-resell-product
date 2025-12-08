@@ -28,7 +28,7 @@ public class ResellStockRepositoryImpl implements ResellStockRepository {
 
 	@Override
 	public void deleteStock(Stock stock) {
-		jpaRepository.delete(stock);
+		stock.delete();
 	}
 
 	@Override
