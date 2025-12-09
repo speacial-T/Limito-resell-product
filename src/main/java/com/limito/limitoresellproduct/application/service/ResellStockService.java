@@ -35,8 +35,6 @@ public class ResellStockService {
 	public StockCreateResponseV1 createStock(@Valid StockCreateRequestV1 request) {
 		Stock stock = ProductMapper.toEntity(request);
 
-		// TODO optionID 존재 확인
-
 		Stock savedStock = resellStockRepository.saveStock(stock);
 
 		productService.changeMinimumPriceStock(
