@@ -39,7 +39,7 @@ public class ResellProductInternalController {
 
 	@PostMapping("/reduce")
 	public ResponseEntity<InternalResponse> reduceStock(@Valid @RequestBody List<StockReduceRequest> request) {
-		checkRole("USER");
+		// checkRole("USER");
 		StockReduceResponseV1 response = resellStockService.reduceStocks(request);
 		return makeResponseWithHttpStatus(response);
 	}
