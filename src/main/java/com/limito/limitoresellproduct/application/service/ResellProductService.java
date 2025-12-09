@@ -16,8 +16,6 @@ import com.limito.limitoresellproduct.presentation.dto.response.ProductGetRespon
 import com.limito.limitoresellproduct.presentation.dto.response.ProductReadResponseV1;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -26,7 +24,7 @@ public class ResellProductService {
 
 	private final ResellProductRepository resellProductRepository;
 
-	public ProductCreateResponseV1 createProduct(@Valid ProductCreateRequestV1 request) {
+	public ProductCreateResponseV1 createProduct(ProductCreateRequestV1 request) {
 		Product product = ProductMapper.toEntity(request);
 		Product savedProduct = resellProductRepository.saveProduct(product);
 		return ProductMapper.toProductCreateResponseV1(savedProduct);
@@ -44,7 +42,7 @@ public class ResellProductService {
 		return ProductReadResponseV1.of(categoryId, products);
 	}
 
-	public ProductGetResponseV1 getProduct(@NotNull(message = "") UUID resellProductId) {
+	public ProductGetResponseV1 getProduct(UUID resellProductId) {
 		Product product = resellProductRepository.findById(resellProductId);
 		return ProductMapper.toProductGetResponseV1(product);
 	}
