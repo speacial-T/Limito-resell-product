@@ -14,6 +14,7 @@ import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequ
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
 
@@ -118,8 +119,20 @@ public class ProductMapper {
 
 	public static StockReduceResponseV1 toStockReduceResponseV1(ProductErrorCode failReason, List<UUID> stockIds) {
 		return StockReduceResponseV1.builder()
-			.errorCode(failReason.getMessage().substring(0, 4))
-			.message(failReason.getMessage().substring(7))
+			.errorCode(failReason.getMessage()
+				.substring(0, 4))
+			.message(failReason.getMessage()
+				.substring(7))
+			.stockIds(stockIds)
+			.build();
+	}
+
+	public static StockCancelResponseV1 toStockCancelResponseV1(ProductErrorCode failReason, List<UUID> stockIds) {
+		return StockCancelResponseV1.builder()
+			.errorCode(failReason.getMessage()
+				.substring(0, 4))
+			.message(failReason.getMessage()
+				.substring(7))
 			.stockIds(stockIds)
 			.build();
 	}

@@ -13,6 +13,7 @@ import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductM
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.request.StockReduceRequest;
+import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReserveResponseV1;
@@ -95,6 +96,21 @@ public class ResellStockService {
 		}
 
 		return result;
+	}
+
+	@Transactional
+	public StockCancelResponseV1 cancelStocks(List<UUID> stockIds) {
+		ProductErrorCode failReason = null;
+
+		for (UUID stockId : stockIds) {
+			failReason = deleteReservedStock(stockId);
+		}
+
+		if (failReason == null) {
+			return null;
+		}
+
+		return ProductMapper.toStockCancelResponseV1(failReason, stockIds);
 	}
 
 	private ProductErrorCode reduceStock(StockReduceRequest request) {
