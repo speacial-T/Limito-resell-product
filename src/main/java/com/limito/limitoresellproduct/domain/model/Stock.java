@@ -26,7 +26,7 @@ public class Stock {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID stockId;
+	private UUID id;
 
 	@Column(name = "option_id", nullable = false)
 	private UUID optionId;

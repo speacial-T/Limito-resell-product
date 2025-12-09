@@ -11,6 +11,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ProductErrorCode implements ErrorCode {
 	INVALID_DOMAIN_INFO(HttpStatus.BAD_REQUEST, "잘못된 도메인 정보입니다."),
+	WRONG_ID(HttpStatus.BAD_REQUEST, "E001 : 잘못된 리셀 상품 재고 ID입니다."),
+	OUT_OF_STOCK(HttpStatus.BAD_REQUEST, "E002 : 재고 부족"),
 	;
 
 	private HttpStatus status;
