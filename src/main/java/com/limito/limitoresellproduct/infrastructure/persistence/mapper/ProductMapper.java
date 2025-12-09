@@ -119,16 +119,20 @@ public class ProductMapper {
 
 	public static StockReduceResponseV1 toStockReduceResponseV1(ProductErrorCode failReason, List<UUID> stockIds) {
 		return StockReduceResponseV1.builder()
-			.errorCode(failReason.getMessage().substring(0, 4))
-			.message(failReason.getMessage().substring(7))
+			.errorCode(failReason.getMessage()
+				.substring(0, 4))
+			.message(failReason.getMessage()
+				.substring(7))
 			.stockIds(stockIds)
 			.build();
 	}
 
 	public static StockCancelResponseV1 toStockCancelResponseV1(ProductErrorCode failReason, List<UUID> stockIds) {
 		return StockCancelResponseV1.builder()
-			.errorCode(failReason.getMessage().substring(0, 4))
-			.message(failReason.getMessage().substring(7))
+			.errorCode(failReason.getMessage()
+				.substring(0, 4))
+			.message(failReason.getMessage()
+				.substring(7))
 			.stockIds(stockIds)
 			.build();
 	}
