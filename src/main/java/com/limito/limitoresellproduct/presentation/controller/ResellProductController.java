@@ -46,7 +46,6 @@ public class ResellProductController {
 		@RequestParam @NotNull(message = "상품 목록 조회 시 카테고리ID는 필수 입력값입니다.") UUID categoryId,
 		@PageableDefault Pageable pageable
 	) {
-		checkAuth();
 		ProductReadResponseV1 response = resellProductService.getProducts(categoryId, pageable);
 		return ResponseEntity.ok().body(response);
 	}
@@ -55,7 +54,6 @@ public class ResellProductController {
 	public ResponseEntity<ProductGetResponseV1> getProduct(
 		@PathVariable @NotNull(message = "") UUID resellProductId
 	) {
-		checkAuth();
 		ProductGetResponseV1 response = resellProductService.getProduct(resellProductId);
 		return ResponseEntity.ok().body(response);
 	}
@@ -64,12 +62,6 @@ public class ResellProductController {
 		String role = UserContextHolder.get().getRole();
 		if (!role.equals(expectedRole)) {
 			throw new AppException(CommonErrorCode.FORBIDDEN);
-		}
-	}
-
-	private void checkAuth() {
-		if (UserContextHolder.get().getRole().isBlank()) {
-			throw new AppException(CommonErrorCode.UNAUTHORIZED);
 		}
 	}
 }
