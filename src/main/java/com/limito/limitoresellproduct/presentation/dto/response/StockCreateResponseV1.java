@@ -15,7 +15,7 @@ public class StockCreateResponseV1 {
 
 	private int price;
 
-	private boolean isDeleted;
+	private boolean soldOut;
 
 	private Long sellerId;
 }

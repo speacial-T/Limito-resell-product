@@ -45,7 +45,7 @@ public class ResellStockService {
 			savedStock.getPrice()
 		);
 
-		return ProductMapper.toDto(savedStock);
+		return ProductMapper.toStockCreateResponseV1(savedStock);
 	}
 
 	public void reserveStocks(List<UUID> stockIds) {
@@ -122,6 +122,7 @@ public class ResellStockService {
 		productService.changeMinimumPriceStock(productId, optionId, minStock.getId(), minStock.getPrice());
 	}
 
+	@Transactional
 	public void rollbackStocks(@Valid List<StockRollbackRequest> requests) {
 		for (StockRollbackRequest request : requests) {
 			rollbackStock(request);
