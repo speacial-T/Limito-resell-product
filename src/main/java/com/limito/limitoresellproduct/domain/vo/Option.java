@@ -8,6 +8,7 @@ import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -126,5 +127,9 @@ public class Option {
 		if (this.minimumPriceStock.getMinimumPriceStockPrice() > newStock.getMinimumPriceStockPrice()) {
 			this.minimumPriceStock = newStock;
 		}
+	}
+
+	public boolean isEqualId(@NotNull UUID optionId) {
+		return this.optionId.equals(optionId);
 	}
 }

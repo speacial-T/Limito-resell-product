@@ -108,7 +108,7 @@ public class Product {
 
 	public Option getOption(UUID optionId) {
 		return options.stream()
-			.filter(option -> option.isId(optionId))
+			.filter(option -> option.isEqualId(optionId))
 			.findFirst()
 			.orElse(null);
 	}
