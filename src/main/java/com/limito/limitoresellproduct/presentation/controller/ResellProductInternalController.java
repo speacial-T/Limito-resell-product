@@ -17,9 +17,6 @@ import com.limito.limitoresellproduct.application.service.ResellStockService;
 import com.limito.limitoresellproduct.presentation.dto.request.StockReduceRequest;
 import com.limito.limitoresellproduct.presentation.dto.request.StockRollbackRequest;
 import com.limito.limitoresellproduct.presentation.dto.response.InternalResponse;
-import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.StockReserveResponseV1;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,21 +29,21 @@ public class ResellProductInternalController {
 	private final ResellStockService resellStockService;
 
 	@PostMapping("/reserve")
-	public ResponseEntity<InternalResponse> reserveStock(@RequestBody List<UUID> stockIds) {
-		StockReserveResponseV1 response = resellStockService.reserveStocks(stockIds);
-		return makeResponseWithHttpStatus(response);
+	public ResponseEntity<Void> reserveStock(@RequestBody List<UUID> stockIds) {
+		resellStockService.reserveStocks(stockIds);
+		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/reduce")
-	public ResponseEntity<InternalResponse> reduceStock(@Valid @RequestBody List<StockReduceRequest> request) {
-		StockReduceResponseV1 response = resellStockService.reduceStocks(request);
-		return makeResponseWithHttpStatus(response);
+	public ResponseEntity<Void> reduceStock(@Valid @RequestBody List<StockReduceRequest> request) {
+		resellStockService.reduceStocks(request);
+		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/cancel")
 	public ResponseEntity<InternalResponse> cancelStock(@RequestBody List<UUID> stockIds) {
-		StockCancelResponseV1 response = resellStockService.cancelStocks(stockIds);
-		return makeResponseWithHttpStatus(response);
+		resellStockService.cancelStocks(stockIds);
+		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/rollback")
@@ -59,18 +56,5 @@ public class ResellProductInternalController {
 		if (!role.equals(expectedRole)) {
 			throw new AppException(CommonErrorCode.FORBIDDEN);
 		}
-	}
-
-	private ResponseEntity<InternalResponse> makeResponseWithHttpStatus(InternalResponse response) {
-		if (response == null) {
-			return ResponseEntity.status(HttpStatus.OK).body(null);
-		}
-		if (response.getErrorCode().equals("E001")) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-		}
-		if (response.getErrorCode().equals("E002")) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-		}
-		return null;
 	}
 }
