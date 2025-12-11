@@ -87,7 +87,7 @@ public class ResellStockService {
 		UUID productId = request.getProductId();
 
 		deleteReservedStock(stockId);
-		deleteStock(stockId);
+		sellStock(stockId);
 		refreshMinStockOfOption(productId, optionId);
 	}
 
@@ -102,17 +102,17 @@ public class ResellStockService {
 		stockInMemoryRepository.delete(key);
 	}
 
-	private void deleteStock(UUID stockId) {
+	private void sellStock(UUID stockId) {
 		Stock stock = resellStockRepository.findById(stockId);
 		if (stock == null) {
 			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
 		}
 
-		if (stock.isDeleted()) {
+		if (stock.isSoldOut()) {
 			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
 		}
 
-		resellStockRepository.deleteStock(stock);
+		stock.changeSoldOutTo(true);
 	}
 
 	private void refreshMinStockOfOption(UUID productId, UUID optionId) {
