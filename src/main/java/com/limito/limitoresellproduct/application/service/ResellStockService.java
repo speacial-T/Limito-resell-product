@@ -14,9 +14,7 @@ import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductM
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.request.StockReduceRequest;
-import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -70,83 +68,51 @@ public class ResellStockService {
 	}
 
 	@Transactional
-	public StockReduceResponseV1 reduceStocks(@Valid List<StockReduceRequest> requests) {
-		StockReduceResponseV1 result = null;
-		ProductErrorCode failReason = null;
-
+	public void reduceStocks(@Valid List<StockReduceRequest> requests) {
 		for (StockReduceRequest request : requests) {
-			failReason = reduceStock(request);
+			reduceStock(request);
 		}
-
-		if (failReason != null) {
-			List<UUID> stockIds = requests.stream()
-				.map(StockReduceRequest::getStockId)
-				.toList();
-			result = ProductMapper.toStockReduceResponseV1(failReason, stockIds);
-		}
-
-		return result;
 	}
 
 	@Transactional
-	public StockCancelResponseV1 cancelStocks(List<UUID> stockIds) {
-		ProductErrorCode failReason = null;
-
+	public void cancelStocks(List<UUID> stockIds) {
 		for (UUID stockId : stockIds) {
-			failReason = deleteReservedStock(stockId);
+			deleteReservedStock(stockId);
 		}
-
-		if (failReason == null) {
-			return null;
-		}
-
-		return ProductMapper.toStockCancelResponseV1(failReason, stockIds);
 	}
 
-	private ProductErrorCode reduceStock(StockReduceRequest request) {
+	private void reduceStock(StockReduceRequest request) {
 		UUID stockId = request.getStockId();
 		UUID optionId = request.getOptionId();
 		UUID productId = request.getProductId();
-		ProductErrorCode failReason = null;
 
-		failReason = deleteReservedStock(stockId);
-		if (failReason != null) {
-			return failReason;
-		}
-
-		failReason = deleteStock(stockId);
-		if (failReason != null) {
-			return failReason;
-		}
-
+		deleteReservedStock(stockId);
+		deleteStock(stockId);
 		refreshMinStockOfOption(productId, optionId);
-		return failReason;
 	}
 
-	private ProductErrorCode deleteReservedStock(UUID stockId) {
+	private void deleteReservedStock(UUID stockId) {
 		String key = REDIS_STOCK_PREFIX_KEY + stockId;
 
 		String reservedStock = stockInMemoryRepository.get(key);
 		if (reservedStock == null) {
-			return ProductErrorCode.WRONG_STOCK_ID;
+			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
 		}
 
 		stockInMemoryRepository.delete(key);
-		return null;
 	}
 
-	private ProductErrorCode deleteStock(UUID stockId) {
+	private void deleteStock(UUID stockId) {
 		Stock stock = resellStockRepository.findById(stockId);
 		if (stock == null) {
-			return ProductErrorCode.WRONG_STOCK_ID;
+			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
 		}
 
 		if (stock.isDeleted()) {
-			return ProductErrorCode.OUT_OF_STOCK;
+			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
 		}
 
 		resellStockRepository.deleteStock(stock);
-		return null;
 	}
 
 	private void refreshMinStockOfOption(UUID productId, UUID optionId) {
