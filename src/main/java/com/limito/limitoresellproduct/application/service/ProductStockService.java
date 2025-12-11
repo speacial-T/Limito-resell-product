@@ -9,6 +9,7 @@ import com.limito.limitoresellproduct.domain.model.Stock;
 import com.limito.limitoresellproduct.domain.repository.ResellProductRepository;
 import com.limito.limitoresellproduct.domain.repository.ResellStockRepository;
 import com.limito.limitoresellproduct.domain.vo.Option;
+import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductMapper;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductInfosGetRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductInfosGetResponseV1;
 
@@ -26,7 +27,7 @@ public class ProductStockService {
 				Product product = resellProductRepository.findById(request.getProductId());
 				Option option = product.getOption(request.getOptionId());
 				Stock stock = resellStockRepository.findById(request.getStockId());
-				return ProductInfosGetResponseV1.create(product, option, stock);
+				return ProductMapper.toProductInfosGetResponseV1(product, option, stock);
 			})
 			.toList();
 
