@@ -136,5 +136,6 @@ public class ResellStockService {
 		}
 
 		stock.changeSoldOutTo(false);
+		refreshMinStockOfOption(request.getProductId(), request.getOptionId());
 	}
 }
