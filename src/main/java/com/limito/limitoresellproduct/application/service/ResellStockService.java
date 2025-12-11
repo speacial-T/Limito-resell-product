@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.domain.model.Stock;
 import com.limito.limitoresellproduct.domain.model.Stocks;
 import com.limito.limitoresellproduct.domain.repository.ResellStockRepository;
@@ -16,7 +17,6 @@ import com.limito.limitoresellproduct.presentation.dto.request.StockReduceReques
 import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.StockReserveResponseV1;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -49,34 +49,24 @@ public class ResellStockService {
 		return ProductMapper.toDto(savedStock);
 	}
 
-	public StockReserveResponseV1 reserveStocks(List<UUID> stockIds) {
-		StockReserveResponseV1 result = null;
+	public void reserveStocks(List<UUID> stockIds) {
 		for (UUID stockId : stockIds) {
-			result = reserveStock(stockId);
+			reserveStock(stockId);
 		}
-		if (result != null) {
-			result.setStockIds(stockIds);
-		}
-		return result;
 	}
 
-	private StockReserveResponseV1 reserveStock(UUID stockId) {
+	private void reserveStock(UUID stockId) {
+		String key = REDIS_STOCK_PREFIX_KEY + stockId;
+
 		if (resellStockRepository.findById(stockId) == null) {
-			return StockReserveResponseV1.builder()
-				.errorCode("E001")
-				.message("잘못된 리셀 재고 ID입니다.")
-				.build();
+			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
 		}
 
-		if (stockInMemoryRepository.get(REDIS_STOCK_PREFIX_KEY + stockId) != null) {
-			return StockReserveResponseV1.builder()
-				.errorCode("E002")
-				.message("재고 부족")
-				.build();
+		if (stockInMemoryRepository.get(key) != null) {
+			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
 		}
 
-		stockInMemoryRepository.set(REDIS_STOCK_PREFIX_KEY + stockId, "1");
-		return null;
+		stockInMemoryRepository.set(key, "1");
 	}
 
 	@Transactional
@@ -138,7 +128,7 @@ public class ResellStockService {
 
 		String reservedStock = stockInMemoryRepository.get(key);
 		if (reservedStock == null) {
-			return ProductErrorCode.WRONG_ID;
+			return ProductErrorCode.WRONG_STOCK_ID;
 		}
 
 		stockInMemoryRepository.delete(key);
@@ -148,7 +138,7 @@ public class ResellStockService {
 	private ProductErrorCode deleteStock(UUID stockId) {
 		Stock stock = resellStockRepository.findById(stockId);
 		if (stock == null) {
-			return ProductErrorCode.WRONG_ID;
+			return ProductErrorCode.WRONG_STOCK_ID;
 		}
 
 		if (stock.isDeleted()) {

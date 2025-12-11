@@ -19,7 +19,6 @@ import com.limito.limitoresellproduct.presentation.dto.request.StockRollbackRequ
 import com.limito.limitoresellproduct.presentation.dto.response.InternalResponse;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.StockReserveResponseV1;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,9 +31,9 @@ public class ResellProductInternalController {
 	private final ResellStockService resellStockService;
 
 	@PostMapping("/reserve")
-	public ResponseEntity<InternalResponse> reserveStock(@RequestBody List<UUID> stockIds) {
-		StockReserveResponseV1 response = resellStockService.reserveStocks(stockIds);
-		return makeResponseWithHttpStatus(response);
+	public ResponseEntity<Void> reserveStock(@RequestBody List<UUID> stockIds) {
+		resellStockService.reserveStocks(stockIds);
+		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/reduce")
