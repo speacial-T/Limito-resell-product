@@ -22,31 +22,31 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/internal/v1/resell-products/stock")
+@RequestMapping("/internal/v1/resell-products")
 @RequiredArgsConstructor
 public class ResellProductInternalController {
 
 	private final ResellStockService resellStockService;
 
-	@PostMapping("/reserve")
+	@PostMapping("/stock/reserve")
 	public ResponseEntity<Void> reserveStock(@RequestBody List<UUID> stockIds) {
 		resellStockService.reserveStocks(stockIds);
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/reduce")
+	@PostMapping("/stock/reduce")
 	public ResponseEntity<Void> reduceStock(@Valid @RequestBody List<StockReduceRequest> request) {
 		resellStockService.reduceStocks(request);
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/cancel")
+	@PostMapping("/stock/cancel")
 	public ResponseEntity<InternalResponse> cancelStock(@RequestBody List<UUID> stockIds) {
 		resellStockService.cancelStocks(stockIds);
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/rollback")
+	@PostMapping("/stock/rollback")
 	public ResponseEntity<Object> rollbackStock(@Valid @RequestBody List<StockRollbackRequest> request) {
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
