@@ -8,6 +8,8 @@ public class Stocks {
 
 	public static Stock calculateMinStock(List<Stock> stocks) {
 		Stock minStock = stocks.stream()
+			.filter(stock -> !stock.isDeleted())
+			.filter(stock -> !stock.isSoldOut())
 			.min(Comparator.comparing(Stock::getPrice))
 			.orElse(null);
 
