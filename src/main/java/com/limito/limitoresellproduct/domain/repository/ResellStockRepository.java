@@ -11,7 +11,5 @@ public interface ResellStockRepository {
 
 	Stock findById(UUID stockId);
 
-	void deleteStock(Stock stock);
-
 	List<Stock> findAllByOptionId(UUID optionId);
 }

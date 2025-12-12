@@ -3,7 +3,6 @@ package com.limito.limitoresellproduct.presentation.controller;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,7 +51,8 @@ public class ResellProductInternalController {
 
 	@PostMapping("/stock/rollback")
 	public ResponseEntity<Void> rollbackStock(@Valid @RequestBody List<StockRollbackRequest> request) {
-		return ResponseEntity.status(HttpStatus.OK).body(null);
+		resellStockService.rollbackStocks(request);
+		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/productInfo")

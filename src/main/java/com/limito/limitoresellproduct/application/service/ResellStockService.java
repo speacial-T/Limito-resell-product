@@ -14,6 +14,7 @@ import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductM
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.request.StockReduceRequest;
+import com.limito.limitoresellproduct.presentation.dto.request.StockRollbackRequest;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
 
 import jakarta.transaction.Transactional;
@@ -44,7 +45,7 @@ public class ResellStockService {
 			savedStock.getPrice()
 		);
 
-		return ProductMapper.toDto(savedStock);
+		return ProductMapper.toStockCreateResponseV1(savedStock);
 	}
 
 	public void reserveStocks(List<UUID> stockIds) {
@@ -87,7 +88,7 @@ public class ResellStockService {
 		UUID productId = request.getProductId();
 
 		deleteReservedStock(stockId);
-		deleteStock(stockId);
+		sellStock(stockId);
 		refreshMinStockOfOption(productId, optionId);
 	}
 
@@ -102,22 +103,39 @@ public class ResellStockService {
 		stockInMemoryRepository.delete(key);
 	}
 
-	private void deleteStock(UUID stockId) {
+	private void sellStock(UUID stockId) {
 		Stock stock = resellStockRepository.findById(stockId);
 		if (stock == null) {
 			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
 		}
 
-		if (stock.isDeleted()) {
+		if (stock.isSoldOut()) {
 			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
 		}
 
-		resellStockRepository.deleteStock(stock);
+		stock.changeSoldOutTo(true);
 	}
 
 	private void refreshMinStockOfOption(UUID productId, UUID optionId) {
 		List<Stock> stocks = resellStockRepository.findAllByOptionId(optionId);
 		Stock minStock = Stocks.calculateMinStock(stocks);
 		productService.changeMinimumPriceStock(productId, optionId, minStock.getId(), minStock.getPrice());
+	}
+
+	@Transactional
+	public void rollbackStocks(@Valid List<StockRollbackRequest> requests) {
+		for (StockRollbackRequest request : requests) {
+			rollbackStock(request);
+		}
+	}
+
+	private void rollbackStock(StockRollbackRequest request) {
+		Stock stock = resellStockRepository.findById(request.getStockId());
+		if (stock == null) {
+			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
+		}
+
+		stock.changeSoldOutTo(false);
+		refreshMinStockOfOption(request.getProductId(), request.getOptionId());
 	}
 }

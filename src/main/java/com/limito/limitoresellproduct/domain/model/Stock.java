@@ -35,8 +35,8 @@ public class Stock {
 	@Min(value = 0)
 	private int price;
 
-	@Column(name = "is_deleted", nullable = false)
-	private boolean isDeleted = false;
+	@Column(name = "sold_out", nullable = false)
+	private boolean soldOut = false;
 
 	@Column(name = "seller_id", nullable = false)
 	private Long sellerId;
@@ -76,5 +76,9 @@ public class Stock {
 			);
 		}
 		this.sellerId = userId.get();
+	}
+
+	public void changeSoldOutTo(boolean soldOut) {
+		this.soldOut = soldOut;
 	}
 }

@@ -27,11 +27,6 @@ public class ResellStockRepositoryImpl implements ResellStockRepository {
 	}
 
 	@Override
-	public void deleteStock(Stock stock) {
-		jpaRepository.delete(stock);
-	}
-
-	@Override
 	public List<Stock> findAllByOptionId(UUID optionId) {
 		return jpaRepository.findAllByOptionId(optionId);
 	}

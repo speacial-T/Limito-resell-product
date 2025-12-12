@@ -73,12 +73,12 @@ public class ProductMapper {
 			.build();
 	}
 
-	public static StockCreateResponseV1 toDto(Stock stock) {
+	public static StockCreateResponseV1 toStockCreateResponseV1(Stock stock) {
 		return StockCreateResponseV1.builder()
 			.stockId(stock.getId())
 			.optionId(stock.getOptionId())
 			.price(stock.getPrice())
-			.isDeleted(stock.isDeleted())
+			.soldOut(stock.isSoldOut())
 			.sellerId(stock.getSellerId())
 			.build();
 	}
