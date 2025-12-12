@@ -6,10 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.domain.model.Product;
 import com.limito.limitoresellproduct.domain.repository.ResellProductRepository;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
+import com.limito.limitoresellproduct.domain.vo.Option;
 import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductMapper;
+import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
@@ -34,6 +37,9 @@ public class ResellProductService {
 	public void changeMinimumPriceStock(UUID productId, UUID optionId, UUID stockId, int price) {
 		MinimumPriceStock minimumPriceStock = new MinimumPriceStock(stockId, price);
 		Product product = resellProductRepository.findById(productId);
+		if (product == null) {
+			throw new AppException(ProductErrorCode.WRONG_PRODUCT_ID);
+		}
 		product.changeMinimumPriceStock(optionId, minimumPriceStock);
 	}
 
@@ -45,5 +51,17 @@ public class ResellProductService {
 	public ProductGetResponseV1 getProduct(UUID resellProductId) {
 		Product product = resellProductRepository.findById(resellProductId);
 		return ProductMapper.toProductGetResponseV1(product);
+	}
+
+	public void validateProductAndOption(UUID productId, UUID optionId) {
+		Product product = resellProductRepository.findById(productId);
+		if (product == null) {
+			throw new AppException(ProductErrorCode.WRONG_PRODUCT_ID);
+		}
+
+		Option option = product.getOption(optionId);
+		if (option == null) {
+			throw new AppException(ProductErrorCode.WRONG_OPTION_ID);
+		}
 	}
 }
