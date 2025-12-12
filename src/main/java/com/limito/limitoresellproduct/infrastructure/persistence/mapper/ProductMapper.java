@@ -3,6 +3,8 @@ package com.limito.limitoresellproduct.infrastructure.persistence.mapper;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Component;
 
 import com.limito.limitoresellproduct.domain.model.Product;
@@ -15,6 +17,7 @@ import com.limito.limitoresellproduct.presentation.dto.request.StockCreateReques
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductInfosGetResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.ProductReadResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
@@ -151,6 +154,48 @@ public class ProductMapper {
 			.productSize(option.getSize())
 			.productPrice(stock.getPrice())
 			.sellerId(stock.getSellerId())
+			.build();
+	}
+
+	public static ProductReadResponseV1 toProductReadResponseV1(UUID categoryId, Page<Product> products) {
+		Page<ProductReadResponseV1.ProductReadRes> mapped = products.map(product -> {
+
+			List<ProductReadResponseV1.OptionReadRes> mappedOptions = product.getOptions().stream()
+				.map(option -> {
+
+					MinimumPriceStock stock = option.getMinimumPriceStock();  // 엔티티 명은 상황에 맞게 변경
+
+					ProductReadResponseV1.MinStockReadRes minStockRes = null;
+					if (stock != null) {
+						minStockRes = new ProductReadResponseV1.MinStockReadRes(
+							stock.getStockId(),
+							stock.getPrice()
+						);
+					}
+
+					return new ProductReadResponseV1.OptionReadRes(
+						option.getOptionId(),
+						option.getModelNumber(),
+						option.getSize(),
+						option.getColor(),
+						option.getThumbnailUrl(),
+						option.getDetails(),
+						minStockRes
+					);
+				})
+				.toList();
+
+			return new ProductReadResponseV1.ProductReadRes(
+				product.getProductId(),
+				product.getName(),
+				product.getBrandName(),
+				mappedOptions
+			);
+		});
+
+		return ProductReadResponseV1.builder()
+			.categoryId(categoryId)
+			.products(new PagedModel<>(mapped))
 			.build();
 	}
 }
