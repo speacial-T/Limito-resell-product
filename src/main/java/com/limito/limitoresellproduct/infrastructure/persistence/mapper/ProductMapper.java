@@ -64,9 +64,10 @@ public class ProductMapper {
 					o.getColor(),
 					o.getThumbnailUrl(),
 					o.getDetails(),
+					o.isInStock(),
 					new ProductCreateResponseV1.MinStockResponse(
-						o.getMinimumPriceStock().getMinimumPriceStockId(),
-						o.getMinimumPriceStock().getMinimumPriceStockPrice()
+						o.getMinimumPriceStock().getStockId(),
+						o.getMinimumPriceStock().getPrice()
 					)
 				))
 				.toList())
@@ -93,8 +94,8 @@ public class ProductMapper {
 				ProductGetResponseV1.ProductGetResponseMinStock minStockRes = null;
 				if (stock != null) {
 					minStockRes = new ProductGetResponseV1.ProductGetResponseMinStock(
-						stock.getMinimumPriceStockId(),
-						stock.getMinimumPriceStockPrice()
+						stock.getStockId(),
+						stock.getPrice()
 					);
 				}
 

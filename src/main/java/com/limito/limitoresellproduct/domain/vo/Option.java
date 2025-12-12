@@ -35,6 +35,9 @@ public class Option {
 	@Column(name = "details", columnDefinition = "TEXT")
 	private String details;
 
+	@Column(name = "inStock", nullable = false)
+	private boolean inStock = false;
+
 	@Embedded
 	private MinimumPriceStock minimumPriceStock;
 
@@ -107,24 +110,22 @@ public class Option {
 	}
 
 	private void setMinimumPriceStock(MinimumPriceStock stock) {
+		this.inStock = true;
 		if (stock == null) {
 			stock = new MinimumPriceStock(null, null);
+			this.inStock = false;
 		}
 		this.minimumPriceStock = stock;
 	}
 
-	public void changeMinimumPriceStock(MinimumPriceStock newStock) {
-		if (this.minimumPriceStock == null) {
-			this.minimumPriceStock = new MinimumPriceStock(null, null);
+	public void changeMinimumPriceStock(MinimumPriceStock newMinStock) {
+		this.minimumPriceStock = newMinStock;
+
+		if (newMinStock != null) {
+			this.inStock = true;
 		}
-		if (newStock == null) {
-			newStock = new MinimumPriceStock(null, null);
-		}
-		if (this.minimumPriceStock.getMinimumPriceStockPrice() < 0) {
-			this.minimumPriceStock = newStock;
-		}
-		if (this.minimumPriceStock.getMinimumPriceStockPrice() > newStock.getMinimumPriceStockPrice()) {
-			this.minimumPriceStock = newStock;
+		if (newMinStock == null) {
+			this.inStock = false;
 		}
 	}
 
