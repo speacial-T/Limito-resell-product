@@ -44,12 +44,15 @@ public class ResellProductService {
 	}
 
 	public ProductReadResponseV1 getProducts(UUID categoryId, Pageable pageable) {
-		Page<Product> products = resellProductRepository.findAllByCategoryId(categoryId, pageable);
+		Page<Product> products = resellProductRepository.findAllByCategoryIdForAllUser(categoryId, pageable);
 		return ProductReadResponseV1.of(categoryId, products);
 	}
 
 	public ProductGetResponseV1 getProduct(UUID resellProductId) {
-		Product product = resellProductRepository.findById(resellProductId);
+		Product product = resellProductRepository.findByIdForAllUser(resellProductId);
+		if (product == null) {
+			throw new AppException(ProductErrorCode.WRONG_PRODUCT_ID);
+		}
 		return ProductMapper.toProductGetResponseV1(product);
 	}
 
