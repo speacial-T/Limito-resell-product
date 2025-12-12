@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.limito.common.audit.UserContextHolder;
+import com.limito.common.audit.UserRole;
 import com.limito.common.code.CommonErrorCode;
 import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.application.service.ResellProductService;
@@ -36,7 +37,7 @@ public class ResellProductController {
 
 	@PostMapping
 	public ResponseEntity<ProductCreateResponseV1> createProduct(@Valid @RequestBody ProductCreateRequestV1 request) {
-		checkRole("ADMIN");
+		// checkRole(UserRole.ADMIN);
 		ProductCreateResponseV1 response = resellProductService.createProduct(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
@@ -52,14 +53,17 @@ public class ResellProductController {
 
 	@GetMapping("/view/{resellProductId}")
 	public ResponseEntity<ProductGetResponseV1> getProduct(
-		@PathVariable @NotNull(message = "") UUID resellProductId
+		@PathVariable @NotNull(message = "상품 상세 조회 시 상품ID는 필수 입력값입니다.") UUID resellProductId
 	) {
 		ProductGetResponseV1 response = resellProductService.getProduct(resellProductId);
 		return ResponseEntity.ok().body(response);
 	}
 
-	private void checkRole(String expectedRole) {
-		String role = UserContextHolder.get().getRole();
+	private void checkRole(UserRole expectedRole) {
+		UserRole role = UserContextHolder.getCurrentUserRole().orElseThrow(() ->
+			AppException.of(CommonErrorCode.UNAUTHORIZED)
+		);
+
 		if (!role.equals(expectedRole)) {
 			throw new AppException(CommonErrorCode.FORBIDDEN);
 		}
