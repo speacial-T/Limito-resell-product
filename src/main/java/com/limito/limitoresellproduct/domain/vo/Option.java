@@ -127,4 +127,8 @@ public class Option {
 			this.minimumPriceStock = newStock;
 		}
 	}
+
+	public boolean isEqualId(UUID optionId) {
+		return this.optionId.equals(optionId);
+	}
 }

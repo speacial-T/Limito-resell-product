@@ -14,6 +14,7 @@ import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequ
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.ProductInfosGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
@@ -134,6 +135,21 @@ public class ProductMapper {
 			.message(failReason.getMessage()
 				.substring(7))
 			.stockIds(stockIds)
+			.build();
+	}
+
+	public static ProductInfosGetResponseV1 toProductInfosGetResponseV1(Product product, Option option, Stock stock) {
+		return ProductInfosGetResponseV1.builder()
+			.productId(product.getProductId())
+			.optionId(option.getOptionId())
+			.stockId(stock.getId())
+			.productType("RESELL")
+			.productName(product.getName())
+			.brandName(product.getBrandName())
+			.productColor(option.getColor())
+			.productSize(option.getSize())
+			.productPrice(stock.getPrice())
+			.sellerId(stock.getSellerId())
 			.build();
 	}
 }
