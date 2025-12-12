@@ -53,9 +53,11 @@ public class ResellStockService {
 	private void reserveStock(UUID stockId) {
 		String key = REDIS_STOCK_PREFIX_KEY + stockId;
 
-		if (resellStockRepository.findById(stockId) == null) {
+		Stock stock = resellStockRepository.findById(stockId);
+		if (stock == null) {
 			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
 		}
+		stock.checkActive();
 
 		if (stockInMemoryRepository.get(key) != null) {
 			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
@@ -104,10 +106,7 @@ public class ResellStockService {
 		if (stock == null) {
 			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
 		}
-
-		if (stock.isSoldOut()) {
-			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
-		}
+		stock.checkActive();
 
 		stock.changeSoldOutTo(true);
 	}
@@ -129,6 +128,10 @@ public class ResellStockService {
 		Stock stock = resellStockRepository.findById(request.getStockId());
 		if (stock == null) {
 			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
+		}
+
+		if (!stock.isSoldOut()) {
+			throw new AppException(ProductErrorCode.ALREADY_EXIST);
 		}
 
 		stock.changeSoldOutTo(false);

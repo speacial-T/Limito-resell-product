@@ -82,4 +82,13 @@ public class Stock extends BaseEntity {
 	public void changeSoldOutTo(boolean soldOut) {
 		this.soldOut = soldOut;
 	}
+
+	public void checkActive() {
+		if (this.isDeleted()) {
+			throw new AppException(ProductErrorCode.INACTIVE_STOCK);
+		}
+		if (this.soldOut) {
+			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
+		}
+	}
 }
