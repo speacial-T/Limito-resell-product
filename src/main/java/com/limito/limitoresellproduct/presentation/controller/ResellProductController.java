@@ -42,7 +42,7 @@ public class ResellProductController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
-	@GetMapping
+	@GetMapping("/view")
 	public ResponseEntity<ProductReadResponseV1> getProducts(
 		@RequestParam @NotNull(message = "상품 목록 조회 시 카테고리ID는 필수 입력값입니다.") UUID categoryId,
 		@PageableDefault Pageable pageable
@@ -51,7 +51,7 @@ public class ResellProductController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	@GetMapping("/{resellProductId}")
+	@GetMapping("/view/{resellProductId}")
 	public ResponseEntity<ProductGetResponseV1> getProduct(
 		@PathVariable @NotNull(message = "상품 상세 조회 시 상품ID는 필수 입력값입니다.") UUID resellProductId
 	) {

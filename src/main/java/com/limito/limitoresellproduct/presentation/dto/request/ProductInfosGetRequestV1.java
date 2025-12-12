@@ -6,8 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
-public class StockRollbackRequest {
-
+public class ProductInfosGetRequestV1 {
 	@NotNull
 	private UUID productId;
 
