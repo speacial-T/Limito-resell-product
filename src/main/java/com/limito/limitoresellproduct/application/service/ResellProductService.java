@@ -45,7 +45,7 @@ public class ResellProductService {
 
 	public ProductReadResponseV1 getProducts(UUID categoryId, Pageable pageable) {
 		Page<Product> products = resellProductRepository.findAllByCategoryId(categoryId, pageable);
-		return ProductReadResponseV1.of(categoryId, products);
+		return ProductMapper.toProductReadResponseV1(categoryId, products);
 	}
 
 	public ProductGetResponseV1 getProduct(UUID resellProductId) {
