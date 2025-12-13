@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,7 @@ import com.limito.limitoresellproduct.presentation.dto.request.StockCreateReques
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductInfosGetResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.ProductReadResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.ProductsGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
@@ -157,44 +158,42 @@ public class ProductMapper {
 			.build();
 	}
 
-	public static ProductReadResponseV1 toProductReadResponseV1(UUID categoryId, Page<Product> products) {
-		Page<ProductReadResponseV1.ProductReadRes> mapped = products.map(product -> {
+	public static ProductsGetResponseV1 toProductsGetResponseV1(UUID categoryId, Page<Product> products) {
+		List<ProductsGetResponseV1.ProductGetResponse> content =
+			products.getContent().stream()
+				.flatMap(product ->
+					product.getOptions().stream()
+						.map(option -> {
+							MinimumPriceStock stock = option.getMinimumPriceStock();
 
-			List<ProductReadResponseV1.OptionReadRes> mappedOptions = product.getOptions().stream()
-				.map(option -> {
-
-					MinimumPriceStock stock = option.getMinimumPriceStock();  // 엔티티 명은 상황에 맞게 변경
-
-					ProductReadResponseV1.MinStockReadRes minStockRes = null;
-					if (stock != null) {
-						minStockRes = new ProductReadResponseV1.MinStockReadRes(
-							stock.getStockId(),
-							stock.getPrice()
-						);
-					}
-
-					return new ProductReadResponseV1.OptionReadRes(
-						option.getOptionId(),
-						option.getModelNumber(),
-						option.getSize(),
-						option.getColor(),
-						option.getThumbnailUrl(),
-						option.getDetails(),
-						minStockRes
-					);
-				})
+							return new ProductsGetResponseV1.ProductGetResponse(
+								product.getProductId(),
+								product.getName(),
+								product.getBrandName(),
+								option.getOptionId(),
+								option.getModelNumber(),
+								option.getColor(),
+								option.getSize(),
+								option.getThumbnailUrl(),
+								option.getDetails(),
+								option.isInStock(),
+								stock.getStockId(),
+								stock.getPrice()
+							);
+						})
+				)
 				.toList();
 
-			return new ProductReadResponseV1.ProductReadRes(
-				product.getProductId(),
-				product.getName(),
-				product.getBrandName(),
-				mappedOptions
+		Page<ProductsGetResponseV1.ProductGetResponse> mapped =
+			new PageImpl<>(
+				content,
+				products.getPageable(),
+				content.size()
 			);
-		});
 
-		return ProductReadResponseV1.builder()
+		return ProductsGetResponseV1.builder()
 			.categoryId(categoryId)
+			.category("임시 카테고리명")
 			.products(new PagedModel<>(mapped))
 			.build();
 	}
