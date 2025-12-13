@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,7 +55,7 @@ public class ResellProductInternalController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/productInfo")
+	@PostMapping("/productInfo")
 	public ResponseEntity<List<ProductInfosGetResponseV1>> getProductInfos(
 		@RequestBody List<ProductInfosGetRequestV1> request
 	) {
