@@ -110,6 +110,7 @@ public class ProductMapper {
 					option.getColor(),
 					option.getThumbnailUrl(),
 					option.getDetails(),
+					option.isInStock(),
 					minStockRes
 				);
 			})
