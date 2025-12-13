@@ -22,6 +22,7 @@ public class ProductGetResponseV1 {
 		String color,
 		String thumbnailUrl,
 		String details,
+		boolean inStock,
 		ProductGetResponseMinStock minStock
 	) {
 	}
