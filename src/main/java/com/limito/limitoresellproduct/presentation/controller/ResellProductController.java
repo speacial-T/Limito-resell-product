@@ -22,7 +22,7 @@ import com.limito.limitoresellproduct.application.service.ResellProductService;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.ProductReadResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.ProductsGetResponseV1;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -43,11 +43,11 @@ public class ResellProductController {
 	}
 
 	@GetMapping("/view")
-	public ResponseEntity<ProductReadResponseV1> getProducts(
+	public ResponseEntity<ProductsGetResponseV1> getProducts(
 		@RequestParam @NotNull(message = "상품 목록 조회 시 카테고리ID는 필수 입력값입니다.") UUID categoryId,
 		@PageableDefault Pageable pageable
 	) {
-		ProductReadResponseV1 response = resellProductService.getProducts(categoryId, pageable);
+		ProductsGetResponseV1 response = resellProductService.getProducts(categoryId, pageable);
 		return ResponseEntity.ok().body(response);
 	}
 
