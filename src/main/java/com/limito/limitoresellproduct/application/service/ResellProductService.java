@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.limito.common.exception.AppException;
+import com.limito.common.security.audit.UserRole;
+import com.limito.common.security.auth.PreAuthorized;
 import com.limito.limitoresellproduct.domain.model.Product;
 import com.limito.limitoresellproduct.domain.repository.ResellProductRepository;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
@@ -27,6 +29,7 @@ public class ResellProductService {
 
 	private final ResellProductRepository resellProductRepository;
 
+	@PreAuthorized(UserRole.ADMIN)
 	public ProductCreateResponseV1 createProduct(ProductCreateRequestV1 request) {
 		Product product = ProductMapper.toEntity(request);
 		Product savedProduct = resellProductRepository.saveProduct(product);

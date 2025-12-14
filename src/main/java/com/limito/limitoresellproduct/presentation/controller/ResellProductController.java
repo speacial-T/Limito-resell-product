@@ -14,10 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.limito.common.audit.UserContextHolder;
-import com.limito.common.audit.UserRole;
-import com.limito.common.code.CommonErrorCode;
-import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.application.service.ResellProductService;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
@@ -37,7 +33,6 @@ public class ResellProductController {
 
 	@PostMapping
 	public ResponseEntity<ProductCreateResponseV1> createProduct(@Valid @RequestBody ProductCreateRequestV1 request) {
-		// checkRole(UserRole.ADMIN);
 		ProductCreateResponseV1 response = resellProductService.createProduct(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
@@ -57,15 +52,5 @@ public class ResellProductController {
 	) {
 		ProductGetResponseV1 response = resellProductService.getProduct(resellProductId);
 		return ResponseEntity.ok().body(response);
-	}
-
-	private void checkRole(UserRole expectedRole) {
-		UserRole role = UserContextHolder.getCurrentUserRole().orElseThrow(() ->
-			AppException.of(CommonErrorCode.UNAUTHORIZED)
-		);
-
-		if (!role.equals(expectedRole)) {
-			throw new AppException(CommonErrorCode.FORBIDDEN);
-		}
 	}
 }

@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.limito.common.exception.AppException;
+import com.limito.common.security.audit.UserRole;
+import com.limito.common.security.auth.PreAuthorized;
 import com.limito.limitoresellproduct.domain.model.Stock;
 import com.limito.limitoresellproduct.domain.model.Stocks;
 import com.limito.limitoresellproduct.domain.repository.ResellStockRepository;
@@ -32,6 +34,7 @@ public class ResellStockService {
 
 	private static final String REDIS_STOCK_PREFIX_KEY = "resell-stock:";
 
+	@PreAuthorized(UserRole.USER)
 	@Transactional
 	public StockCreateResponseV1 createStock(@Valid StockCreateRequestV1 request) {
 		Stock stock = ProductMapper.toEntity(request);

@@ -10,10 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.limito.common.audit.UserContextHolder;
-import com.limito.common.audit.UserRole;
-import com.limito.common.code.CommonErrorCode;
-import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.application.service.ProductStockService;
 import com.limito.limitoresellproduct.application.service.ResellStockService;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductInfosGetRequestV1;
@@ -62,15 +58,5 @@ public class ResellProductInternalController {
 	) {
 		List<ProductInfosGetResponseV1> response = productStockService.getProdutctInfos(request);
 		return ResponseEntity.ok().body(response);
-	}
-
-	private void checkRole(UserRole expectedRole) {
-		UserRole role = UserContextHolder.getCurrentUserRole().orElseThrow(() ->
-			AppException.of(CommonErrorCode.UNAUTHORIZED)
-		);
-
-		if (!role.equals(expectedRole)) {
-			throw new AppException(CommonErrorCode.FORBIDDEN);
-		}
 	}
 }

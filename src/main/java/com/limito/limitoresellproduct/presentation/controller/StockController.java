@@ -7,10 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.limito.common.audit.UserContextHolder;
-import com.limito.common.audit.UserRole;
-import com.limito.common.code.CommonErrorCode;
-import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.application.service.ResellStockService;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
@@ -27,18 +23,7 @@ public class StockController {
 
 	@PostMapping("/stock")
 	public ResponseEntity<StockCreateResponseV1> createProduct(@Valid @RequestBody StockCreateRequestV1 request) {
-		// checkRole(UserRole.USER);
 		StockCreateResponseV1 response = stockService.createStock(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
-	}
-
-	private void checkRole(UserRole expectedRole) {
-		UserRole role = UserContextHolder.getCurrentUserRole().orElseThrow(() ->
-			AppException.of(CommonErrorCode.UNAUTHORIZED)
-		);
-
-		if (!role.equals(expectedRole)) {
-			throw new AppException(CommonErrorCode.FORBIDDEN);
-		}
 	}
 }
