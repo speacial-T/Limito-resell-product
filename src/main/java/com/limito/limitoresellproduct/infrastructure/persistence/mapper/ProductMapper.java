@@ -12,16 +12,13 @@ import com.limito.limitoresellproduct.domain.model.Product;
 import com.limito.limitoresellproduct.domain.model.Stock;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.domain.vo.Option;
-import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductInfosGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductsGetResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
 
 import jakarta.validation.Valid;
 
@@ -121,26 +118,6 @@ public class ProductMapper {
 			.productName(product.getName())
 			.brandName(product.getBrandName())
 			.options(mappedOptions)
-			.build();
-	}
-
-	public static StockReduceResponseV1 toStockReduceResponseV1(ProductErrorCode failReason, List<UUID> stockIds) {
-		return StockReduceResponseV1.builder()
-			.errorCode(failReason.getMessage()
-				.substring(0, 4))
-			.message(failReason.getMessage()
-				.substring(7))
-			.stockIds(stockIds)
-			.build();
-	}
-
-	public static StockCancelResponseV1 toStockCancelResponseV1(ProductErrorCode failReason, List<UUID> stockIds) {
-		return StockCancelResponseV1.builder()
-			.errorCode(failReason.getMessage()
-				.substring(0, 4))
-			.message(failReason.getMessage()
-				.substring(7))
-			.stockIds(stockIds)
 			.build();
 	}
 
