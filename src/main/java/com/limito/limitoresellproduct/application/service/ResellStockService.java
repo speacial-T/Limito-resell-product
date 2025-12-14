@@ -54,16 +54,8 @@ public class ResellStockService {
 	private void reserveStock(UUID stockId) {
 		String key = REDIS_STOCK_PREFIX_KEY + stockId;
 
-		// TODO findByIdOrElseThrow로 변환
-		if (resellStockRepository.findById(stockId) == null) {
-			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
-		}
-
-		// TODO getOrElseThrow로 변환
-		if (stockInMemoryRepository.get(key) != null) {
-			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
-		}
-
+		resellStockRepository.findByIdOrElseThrow(stockId);
+		stockInMemoryRepository.getOrElseThrow(key);
 		stockInMemoryRepository.set(key, "1");
 	}
 
@@ -94,21 +86,12 @@ public class ResellStockService {
 	private void deleteReservedStock(UUID stockId) {
 		String key = REDIS_STOCK_PREFIX_KEY + stockId;
 
-		// TODO getOrElseThrow로 변환
-		String reservedStock = stockInMemoryRepository.get(key);
-		if (reservedStock == null) {
-			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
-		}
-
+		stockInMemoryRepository.getOrElseThrow(key);
 		stockInMemoryRepository.delete(key);
 	}
 
 	private void sellStock(UUID stockId) {
-		// TODO findByIdOrElseThrow로 변환
-		Stock stock = resellStockRepository.findById(stockId);
-		if (stock == null) {
-			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
-		}
+		Stock stock = resellStockRepository.findByIdOrElseThrow(stockId);
 
 		if (stock.isSoldOut()) {
 			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
@@ -131,11 +114,7 @@ public class ResellStockService {
 	}
 
 	private void rollbackStock(StockRollbackRequest request) {
-		// TODO findByIdOrElseThrow로 변환
-		Stock stock = resellStockRepository.findById(request.getStockId());
-		if (stock == null) {
-			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
-		}
+		Stock stock = resellStockRepository.findByIdOrElseThrow(request.getStockId());
 
 		stock.changeSoldOutTo(false);
 		refreshMinStockOfOption(request.getProductId(), request.getOptionId());

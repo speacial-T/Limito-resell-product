@@ -12,4 +12,6 @@ public interface ResellStockRepository {
 	Stock findById(UUID stockId);
 
 	List<Stock> findAllByOptionId(UUID optionId);
+
+	Stock findByIdOrElseThrow(UUID stockId);
 }
