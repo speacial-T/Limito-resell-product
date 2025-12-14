@@ -36,7 +36,7 @@ public class ResellStockRepositoryImpl implements ResellStockRepository {
 	@Override
 	public Stock findByIdOrElseThrow(UUID stockId) {
 		return jpaRepository.findById(stockId).orElseThrow(() ->
-			new AppException(ProductErrorCode.WRONG_STOCK_ID)
+			AppException.of(ProductErrorCode.WRONG_STOCK_ID)
 		);
 	}
 }

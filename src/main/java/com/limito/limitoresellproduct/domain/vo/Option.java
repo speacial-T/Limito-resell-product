@@ -77,7 +77,7 @@ public class Option {
 
 	private void setModelNumber(String modelNumber) {
 		if (modelNumber == null || modelNumber.isBlank()) {
-			throw new AppException(
+			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
 				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 모델번호는 필수 입력값입니다."
 			);
@@ -101,7 +101,7 @@ public class Option {
 
 	private void setThumbnailUrl(String thumbnailUrl) {
 		if (thumbnailUrl == null || thumbnailUrl.isBlank()) {
-			throw new AppException(
+			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
 				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 대표 이미지는 필수 입력값입니다."
 			);

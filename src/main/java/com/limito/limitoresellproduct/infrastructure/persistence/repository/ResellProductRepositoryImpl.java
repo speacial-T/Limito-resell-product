@@ -37,7 +37,7 @@ public class ResellProductRepositoryImpl implements ResellProductRepository {
 	@Override
 	public Product findByIdOrElseThorw(UUID productId) {
 		return jpaRepository.findById(productId).orElseThrow(() ->
-			new AppException(ProductErrorCode.WRONG_PRODUCT_ID)
+			AppException.of(ProductErrorCode.WRONG_PRODUCT_ID)
 		);
 	}
 }

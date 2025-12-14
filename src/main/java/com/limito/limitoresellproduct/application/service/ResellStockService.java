@@ -97,7 +97,7 @@ public class ResellStockService {
 		Stock stock = resellStockRepository.findByIdOrElseThrow(stockId);
 
 		if (stock.isSoldOut()) {
-			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
+			throw AppException.of(ProductErrorCode.OUT_OF_STOCK);
 		}
 
 		stock.changeSoldOutTo(true);

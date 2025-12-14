@@ -33,7 +33,7 @@ public class StockInMemoryRepositoryImpl implements StockInMemoryRepository {
 		ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
 		String result = ops.get(key);
 		if (result == null) {
-			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
+			throw AppException.of(ProductErrorCode.OUT_OF_STOCK);
 		}
 		return result;
 	}

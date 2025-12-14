@@ -3,8 +3,8 @@ package com.limito.limitoresellproduct.domain.model;
 import java.util.List;
 import java.util.UUID;
 
-import com.limito.common.audit.BaseEntity;
 import com.limito.common.exception.AppException;
+import com.limito.common.security.audit.BaseEntity;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.domain.vo.Option;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
@@ -58,7 +58,7 @@ public class Product extends BaseEntity {
 
 	private void setName(String name) {
 		if (name == null || name.isBlank()) {
-			throw new AppException(
+			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
 				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 상품명은 공백이면 안 됩니다."
 			);
@@ -68,7 +68,7 @@ public class Product extends BaseEntity {
 
 	private void setBrandName(String brandName) {
 		if (brandName == null || brandName.isBlank()) {
-			throw new AppException(
+			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
 				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 브랜드명은 공백이면 안 됩니다."
 			);
@@ -78,7 +78,7 @@ public class Product extends BaseEntity {
 
 	private void setCategoryId(UUID categoryId) {
 		if (categoryId == null) {
-			throw new AppException(
+			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
 				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 카테고리는 반드시 지정되어야 합니다."
 			);
@@ -88,7 +88,7 @@ public class Product extends BaseEntity {
 
 	private void setOptions(List<Option> options) {
 		if (options == null) {
-			throw new AppException(
+			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
 				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 옵션은 적어도 하나 있어야 합니다."
 			);

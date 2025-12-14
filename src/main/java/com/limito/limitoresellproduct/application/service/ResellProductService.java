@@ -57,7 +57,7 @@ public class ResellProductService {
 
 		Option option = product.getOption(optionId);
 		if (option == null) {
-			throw new AppException(ProductErrorCode.WRONG_OPTION_ID);
+			throw AppException.of(ProductErrorCode.WRONG_OPTION_ID);
 		}
 	}
 }

@@ -3,9 +3,9 @@ package com.limito.limitoresellproduct.domain.model;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.limito.common.audit.BaseEntity;
-import com.limito.common.audit.UserContextHolder;
 import com.limito.common.exception.AppException;
+import com.limito.common.security.audit.BaseEntity;
+import com.limito.common.security.context.UserContextHolder;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 
 import jakarta.persistence.Column;
@@ -54,7 +54,7 @@ public class Stock extends BaseEntity {
 
 	private void setOptionId(UUID optionId) {
 		if (optionId == null) {
-			throw new AppException(
+			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
 				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 옵션ID는 필수 입력값입니다."
 			);
@@ -64,7 +64,7 @@ public class Stock extends BaseEntity {
 
 	private void setPrice(int price) {
 		if (price < 0) {
-			throw new AppException(
+			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
 				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 가격은 0이상 이어야 합니다."
 			);
@@ -75,7 +75,7 @@ public class Stock extends BaseEntity {
 	private void setSellerId() {
 		Optional<Long> userId = UserContextHolder.getCurrentUserId();
 		if (userId.isEmpty()) {
-			throw new AppException(
+			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
 				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 판매자를 알 수 없습니다."
 			);
