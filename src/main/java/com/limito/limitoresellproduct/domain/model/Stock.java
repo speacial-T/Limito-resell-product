@@ -48,6 +48,10 @@ public class Stock extends BaseEntity {
 		setSellerId();
 	}
 
+	public void changeSoldOutTo(boolean soldOut) {
+		this.soldOut = soldOut;
+	}
+
 	private void setOptionId(UUID optionId) {
 		if (optionId == null) {
 			throw new AppException(
@@ -77,10 +81,6 @@ public class Stock extends BaseEntity {
 			);
 		}
 		this.sellerId = userId.get();
-	}
-
-	public void changeSoldOutTo(boolean soldOut) {
-		this.soldOut = soldOut;
 	}
 
 	public void checkActive() {
