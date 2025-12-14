@@ -34,13 +34,13 @@ public class ResellProductService {
 	}
 
 	@Transactional
-	public void changeMinimumPriceStock(UUID productId, UUID optionId, UUID stockId, int price) {
-		MinimumPriceStock minimumPriceStock = new MinimumPriceStock(stockId, price);
+	public void changeMinimumPriceStock(UUID productId, UUID optionId, MinimumPriceStock minStock) {
+		// TODO findByIdOrElseThrow로 변환
 		Product product = resellProductRepository.findById(productId);
 		if (product == null) {
 			throw new AppException(ProductErrorCode.WRONG_PRODUCT_ID);
 		}
-		product.changeMinimumPriceStock(optionId, minimumPriceStock);
+		product.changeMinimumPriceStock(optionId, minStock);
 	}
 
 	public ProductsGetResponseV1 getProducts(UUID categoryId, Pageable pageable) {
@@ -54,6 +54,7 @@ public class ResellProductService {
 	}
 
 	public void validateProductAndOption(UUID productId, UUID optionId) {
+		// TODO findByIdOrElseThrow로 변환
 		Product product = resellProductRepository.findById(productId);
 		if (product == null) {
 			throw new AppException(ProductErrorCode.WRONG_PRODUCT_ID);

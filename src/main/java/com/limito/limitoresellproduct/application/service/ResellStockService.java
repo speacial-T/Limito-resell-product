@@ -10,6 +10,7 @@ import com.limito.limitoresellproduct.domain.model.Stock;
 import com.limito.limitoresellproduct.domain.model.Stocks;
 import com.limito.limitoresellproduct.domain.repository.ResellStockRepository;
 import com.limito.limitoresellproduct.domain.repository.StockInMemoryRepository;
+import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductMapper;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
@@ -53,10 +54,12 @@ public class ResellStockService {
 	private void reserveStock(UUID stockId) {
 		String key = REDIS_STOCK_PREFIX_KEY + stockId;
 
+		// TODO findByIdOrElseThrow로 변환
 		if (resellStockRepository.findById(stockId) == null) {
 			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
 		}
 
+		// TODO getOrElseThrow로 변환
 		if (stockInMemoryRepository.get(key) != null) {
 			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
 		}
@@ -91,6 +94,7 @@ public class ResellStockService {
 	private void deleteReservedStock(UUID stockId) {
 		String key = REDIS_STOCK_PREFIX_KEY + stockId;
 
+		// TODO getOrElseThrow로 변환
 		String reservedStock = stockInMemoryRepository.get(key);
 		if (reservedStock == null) {
 			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
@@ -100,6 +104,7 @@ public class ResellStockService {
 	}
 
 	private void sellStock(UUID stockId) {
+		// TODO findByIdOrElseThrow로 변환
 		Stock stock = resellStockRepository.findById(stockId);
 		if (stock == null) {
 			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
@@ -114,8 +119,8 @@ public class ResellStockService {
 
 	private void refreshMinStockOfOption(UUID productId, UUID optionId) {
 		List<Stock> stocks = resellStockRepository.findAllByOptionId(optionId);
-		Stock minStock = Stocks.calculateMinStock(stocks);
-		productService.changeMinimumPriceStock(productId, optionId, minStock.getId(), minStock.getPrice());
+		MinimumPriceStock minStock = Stocks.calculateMinStock(stocks);
+		productService.changeMinimumPriceStock(productId, optionId, minStock);
 	}
 
 	@Transactional
@@ -126,6 +131,7 @@ public class ResellStockService {
 	}
 
 	private void rollbackStock(StockRollbackRequest request) {
+		// TODO findByIdOrElseThrow로 변환
 		Stock stock = resellStockRepository.findById(request.getStockId());
 		if (stock == null) {
 			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);

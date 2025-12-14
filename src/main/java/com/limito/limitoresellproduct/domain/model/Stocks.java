@@ -3,13 +3,16 @@ package com.limito.limitoresellproduct.domain.model;
 import java.util.Comparator;
 import java.util.List;
 
+import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
+
 public class Stocks {
 	private List<Stock> stocks;
 
-	public static Stock calculateMinStock(List<Stock> stocks) {
-		Stock minStock = stocks.stream()
+	public static MinimumPriceStock calculateMinStock(List<Stock> stocks) {
+		MinimumPriceStock minStock = stocks.stream()
 			.min(Comparator.comparing(Stock::getPrice))
-			.orElse(null);
+			.map(stock -> new MinimumPriceStock(stock.getId(), stock.getPrice()))
+			.orElse(new MinimumPriceStock(null, null));
 
 		return minStock;
 	}
