@@ -35,11 +35,7 @@ public class ResellProductService {
 
 	@Transactional
 	public void changeMinimumPriceStock(UUID productId, UUID optionId, MinimumPriceStock minStock) {
-		// TODO findByIdOrElseThrow로 변환
-		Product product = resellProductRepository.findById(productId);
-		if (product == null) {
-			throw new AppException(ProductErrorCode.WRONG_PRODUCT_ID);
-		}
+		Product product = resellProductRepository.findByIdOrElseThorw(productId);
 		product.changeMinimumPriceStock(optionId, minStock);
 	}
 
@@ -57,11 +53,7 @@ public class ResellProductService {
 	}
 
 	public void validateProductAndOption(UUID productId, UUID optionId) {
-		// TODO findByIdOrElseThrow로 변환
-		Product product = resellProductRepository.findById(productId);
-		if (product == null) {
-			throw new AppException(ProductErrorCode.WRONG_PRODUCT_ID);
-		}
+		Product product = resellProductRepository.findByIdOrElseThorw(productId);
 		product.validateActive();
 
 		Option option = product.getOption(optionId);

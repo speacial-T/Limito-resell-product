@@ -5,8 +5,10 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
+import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.domain.model.Stock;
 import com.limito.limitoresellproduct.domain.repository.ResellStockRepository;
+import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,5 +31,12 @@ public class ResellStockRepositoryImpl implements ResellStockRepository {
 	@Override
 	public List<Stock> findAllByOptionId(UUID optionId) {
 		return jpaRepository.findAllByOptionId(optionId);
+	}
+
+	@Override
+	public Stock findByIdOrElseThrow(UUID stockId) {
+		return jpaRepository.findById(stockId).orElseThrow(() ->
+			new AppException(ProductErrorCode.WRONG_STOCK_ID)
+		);
 	}
 }

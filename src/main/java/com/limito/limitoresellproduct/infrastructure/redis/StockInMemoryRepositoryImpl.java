@@ -4,7 +4,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
+import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.domain.repository.StockInMemoryRepository;
+import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,12 +15,6 @@ import lombok.RequiredArgsConstructor;
 public class StockInMemoryRepositoryImpl implements StockInMemoryRepository {
 
 	private final StringRedisTemplate stringRedisTemplate;
-
-	@Override
-	public String get(String key) {
-		ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-		return ops.get(key);
-	}
 
 	@Override
 	public void set(String key, String value) {
@@ -30,5 +26,15 @@ public class StockInMemoryRepositoryImpl implements StockInMemoryRepository {
 	public void delete(String key) {
 		ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
 		ops.getAndDelete(key);
+	}
+
+	@Override
+	public String getOrElseThrow(String key) {
+		ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+		String result = ops.get(key);
+		if (result == null) {
+			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
+		}
+		return result;
 	}
 }
