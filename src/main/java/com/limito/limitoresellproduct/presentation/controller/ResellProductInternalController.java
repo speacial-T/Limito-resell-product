@@ -58,7 +58,7 @@ public class ResellProductInternalController {
 
 	@GetMapping("/productInfo")
 	public ResponseEntity<List<ProductInfosGetResponseV1>> getProductInfos(
-		@RequestBody List<ProductInfosGetRequestV1> request
+		@Valid @RequestBody List<ProductInfosGetRequestV1> request
 	) {
 		List<ProductInfosGetResponseV1> response = productStockService.getProdutctInfos(request);
 		return ResponseEntity.ok().body(response);

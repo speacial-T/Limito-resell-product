@@ -23,10 +23,10 @@ public class ProductCreateRequestV1 {
 	private List<OptionRequestV1> options;
 
 	public record OptionRequestV1(
-		String modelNumber,
+		@NotBlank(message = "모델번호는 필수 입력값입니다.") String modelNumber,
 		String size,
 		String color,
-		String thumbnailUrl,
+		@NotBlank(message = "옵션별 대표이미지 URL은 필수 입력값입니다.") String thumbnailUrl,
 		String details
 	) {
 	}
