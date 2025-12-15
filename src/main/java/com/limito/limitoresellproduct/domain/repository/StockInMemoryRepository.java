@@ -7,4 +7,6 @@ public interface StockInMemoryRepository {
 	void delete(String key);
 
 	String getOrElseThrow(String key);
+
+	String get(String key);
 }

@@ -56,7 +56,10 @@ public class ResellStockService {
 
 		Stock stock = resellStockRepository.findByIdOrElseThrow(stockId);
 		stock.checkActive();
-		stockInMemoryRepository.getOrElseThrow(key);
+		String reservedStock = stockInMemoryRepository.get(key);
+		if (reservedStock != null) {
+			throw AppException.of(ProductErrorCode.OUT_OF_STOCK);
+		}
 		stockInMemoryRepository.set(key, "1");
 	}
 
@@ -92,7 +95,6 @@ public class ResellStockService {
 	}
 
 	private void sellStock(UUID stockId) {
-		// TODO findByIdOrElseThrow로 변환
 		Stock stock = resellStockRepository.findByIdOrElseThrow(stockId);
 		stock.checkActive();
 
