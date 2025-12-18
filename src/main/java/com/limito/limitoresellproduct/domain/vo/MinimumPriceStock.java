@@ -14,20 +14,20 @@ import lombok.NoArgsConstructor;
 public class MinimumPriceStock {
 
 	@Column(name = "min_price_stock_id")
-	private UUID minimumPriceStockId;
+	private UUID stockId;
 
 	@Column(name = "min_price_stock_price")
-	private int minimumPriceStockPrice;
+	private int price;
 
 	public MinimumPriceStock(UUID stockId, Integer price) {
-		this.minimumPriceStockId = stockId;
+		this.stockId = stockId;
 		setPrice(price);
 	}
 
 	private void setPrice(Integer price) {
 		if (price == null) {
-			price = -1;
+			price = 0;
 		}
-		this.minimumPriceStockPrice = price;
+		this.price = price;
 	}
 }

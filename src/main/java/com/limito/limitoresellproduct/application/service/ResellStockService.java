@@ -31,17 +31,15 @@ public class ResellStockService {
 
 	private static final String REDIS_STOCK_PREFIX_KEY = "resell-stock:";
 
+	@Transactional
 	public StockCreateResponseV1 createStock(@Valid StockCreateRequestV1 request) {
 		Stock stock = ProductMapper.toEntity(request);
 
+		productService.validateProductAndOption(request.getProductId(), request.getOptionId());
+
 		Stock savedStock = resellStockRepository.saveStock(stock);
 
-		productService.changeMinimumPriceStock(
-			request.getProductId(),
-			savedStock.getOptionId(),
-			savedStock.getId(),
-			savedStock.getPrice()
-		);
+		refreshMinStockOfOption(request.getProductId(), request.getOptionId());
 
 		return ProductMapper.toStockCreateResponseV1(savedStock);
 	}

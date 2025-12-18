@@ -99,11 +99,7 @@ public class Product {
 	}
 
 	public void changeMinimumPriceStock(UUID optionId, MinimumPriceStock newStock) {
-		this.options.forEach(option -> {
-			if (option.getOptionId().equals(optionId)) {
-				option.changeMinimumPriceStock(newStock);
-			}
-		});
+		this.getOption(optionId).changeMinimumPriceStock(newStock);
 	}
 
 	public Option getOption(UUID optionId) {

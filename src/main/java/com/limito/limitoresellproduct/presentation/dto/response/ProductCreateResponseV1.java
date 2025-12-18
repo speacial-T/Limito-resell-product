@@ -34,6 +34,7 @@ public class ProductCreateResponseV1 {
 		String color,
 		String thumbnailUrl,
 		String details,
+		boolean inStock,
 		MinStockResponse minStock
 	) {
 	}

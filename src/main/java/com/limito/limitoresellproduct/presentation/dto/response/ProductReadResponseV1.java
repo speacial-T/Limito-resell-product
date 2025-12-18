@@ -57,8 +57,8 @@ public class ProductReadResponseV1 {
 					MinStockReadRes minStockRes = null;
 					if (stock != null) {
 						minStockRes = new MinStockReadRes(
-							stock.getMinimumPriceStockId(),
-							stock.getMinimumPriceStockPrice()
+							stock.getStockId(),
+							stock.getPrice()
 						);
 					}
 
