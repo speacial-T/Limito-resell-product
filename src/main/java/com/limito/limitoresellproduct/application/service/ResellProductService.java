@@ -40,7 +40,7 @@ public class ResellProductService {
 		if (product == null) {
 			throw new AppException(ProductErrorCode.WRONG_PRODUCT_ID);
 		}
-		product.checkActive();
+		product.validateActive();
 		product.changeMinimumPriceStock(optionId, minimumPriceStock);
 	}
 
@@ -62,7 +62,7 @@ public class ResellProductService {
 		if (product == null) {
 			throw new AppException(ProductErrorCode.WRONG_PRODUCT_ID);
 		}
-		product.checkActive();
+		product.validateActive();
 
 		Option option = product.getOption(optionId);
 		if (option == null) {

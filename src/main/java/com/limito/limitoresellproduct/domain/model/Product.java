@@ -112,7 +112,7 @@ public class Product extends BaseEntity {
 			.orElse(null);
 	}
 
-	public void checkActive() {
+	public void validateActive() {
 		if (this.isDeleted()) {
 			throw new AppException(ProductErrorCode.INACTIVE_PRODUCT);
 		}
