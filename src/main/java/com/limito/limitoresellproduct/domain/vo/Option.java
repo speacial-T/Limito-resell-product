@@ -132,4 +132,7 @@ public class Option {
 	public boolean isEqualId(UUID optionId) {
 		return this.optionId.equals(optionId);
 	}
+
+	public void checkActive() {
+	}
 }

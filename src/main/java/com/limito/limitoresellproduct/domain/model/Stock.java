@@ -3,6 +3,7 @@ package com.limito.limitoresellproduct.domain.model;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.limito.common.audit.BaseEntity;
 import com.limito.common.audit.UserContextHolder;
 import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "p_resell_product_stocks")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Stock {
+public class Stock extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -80,5 +81,14 @@ public class Stock {
 
 	public void changeSoldOutTo(boolean soldOut) {
 		this.soldOut = soldOut;
+	}
+
+	public void checkActive() {
+		if (this.isDeleted()) {
+			throw new AppException(ProductErrorCode.INACTIVE_STOCK);
+		}
+		if (this.soldOut) {
+			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
+		}
 	}
 }

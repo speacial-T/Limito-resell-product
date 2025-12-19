@@ -28,7 +28,12 @@ public class ResellProductRepositoryImpl implements ResellProductRepository {
 	}
 
 	@Override
-	public Page<Product> findAllByCategoryId(UUID categoryId, Pageable pageable) {
-		return jpaRepository.findAllByCategoryId(categoryId, pageable);
+	public Product findByIdForAllUser(UUID productId) {
+		return jpaRepository.findByProductIdAndDeletedAtIsNull(productId).orElse(null);
+	}
+
+	@Override
+	public Page<Product> findAllByCategoryIdForAllUser(UUID categoryId, Pageable pageable) {
+		return jpaRepository.findAllByCategoryIdAndDeletedAtIsNull(categoryId, pageable);
 	}
 }

@@ -3,6 +3,7 @@ package com.limito.limitoresellproduct.domain.model;
 import java.util.List;
 import java.util.UUID;
 
+import com.limito.common.audit.BaseEntity;
 import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.domain.vo.Option;
@@ -26,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "p_resell_products")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Product {
+public class Product extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -99,7 +100,9 @@ public class Product {
 	}
 
 	public void changeMinimumPriceStock(UUID optionId, MinimumPriceStock newStock) {
-		this.getOption(optionId).changeMinimumPriceStock(newStock);
+		this.validOptionActive(optionId);
+		Option option = this.getOption(optionId);
+		option.changeMinimumPriceStock(newStock);
 	}
 
 	public Option getOption(UUID optionId) {
@@ -107,5 +110,20 @@ public class Product {
 			.filter(option -> option.isEqualId(optionId))
 			.findFirst()
 			.orElse(null);
+	}
+
+	public void validateActive() {
+		if (this.isDeleted()) {
+			throw new AppException(ProductErrorCode.INACTIVE_PRODUCT);
+		}
+	}
+
+	private void validOptionActive(UUID optionId) {
+		Option option = this.getOption(optionId);
+		if (option == null) {
+			throw new AppException(ProductErrorCode.WRONG_OPTION_ID);
+		}
+
+		option.checkActive();
 	}
 }
