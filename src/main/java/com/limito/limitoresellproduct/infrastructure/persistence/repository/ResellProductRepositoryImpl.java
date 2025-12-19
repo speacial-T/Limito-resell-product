@@ -30,13 +30,20 @@ public class ResellProductRepositoryImpl implements ResellProductRepository {
 	}
 
 	@Override
-	public Page<Product> findAllByCategoryId(UUID categoryId, Pageable pageable) {
-		return jpaRepository.findAllByCategoryId(categoryId, pageable);
+	public Page<Product> findAllByCategoryIdForAllUser(UUID categoryId, Pageable pageable) {
+		return jpaRepository.findAllByCategoryIdAndDeletedAtIsNull(categoryId, pageable);
 	}
 
 	@Override
 	public Product findByIdOrElseThorw(UUID productId) {
 		return jpaRepository.findById(productId).orElseThrow(() ->
+			AppException.of(ProductErrorCode.WRONG_PRODUCT_ID)
+		);
+	}
+
+	@Override
+	public Product findByIdForAllUserOrElseThrow(UUID resellProductId) {
+		return jpaRepository.findByProductIdAndDeletedAtIsNull(resellProductId).orElseThrow(() ->
 			AppException.of(ProductErrorCode.WRONG_PRODUCT_ID)
 		);
 	}

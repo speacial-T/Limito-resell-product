@@ -100,7 +100,9 @@ public class Product extends BaseEntity {
 	}
 
 	public void changeMinimumPriceStock(UUID optionId, MinimumPriceStock newStock) {
-		this.getOption(optionId).changeMinimumPriceStock(newStock);
+		this.validOptionActive(optionId);
+		Option option = this.getOption(optionId);
+		option.changeMinimumPriceStock(newStock);
 	}
 
 	public Option getOption(UUID optionId) {
@@ -108,5 +110,18 @@ public class Product extends BaseEntity {
 			.filter(option -> option.isEqualId(optionId))
 			.findFirst()
 			.orElse(null);
+	}
+
+	public void validateActive() {
+		if (this.isDeleted()) {
+			throw AppException.of(ProductErrorCode.INACTIVE_PRODUCT);
+		}
+	}
+
+	private void validOptionActive(UUID optionId) {
+		Option option = this.getOption(optionId);
+		if (option == null) {
+			throw AppException.of(ProductErrorCode.WRONG_OPTION_ID);
+		}
 	}
 }

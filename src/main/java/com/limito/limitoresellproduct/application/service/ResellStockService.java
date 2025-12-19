@@ -95,11 +95,7 @@ public class ResellStockService {
 
 	private void sellStock(UUID stockId) {
 		Stock stock = resellStockRepository.findByIdOrElseThrow(stockId);
-
-		if (stock.isSoldOut()) {
-			throw AppException.of(ProductErrorCode.OUT_OF_STOCK);
-		}
-
+		stock.checkActive();
 		stock.changeSoldOutTo(true);
 	}
 
@@ -118,6 +114,10 @@ public class ResellStockService {
 
 	private void rollbackStock(StockRollbackRequest request) {
 		Stock stock = resellStockRepository.findByIdOrElseThrow(request.getStockId());
+
+		if (!stock.isSoldOut()) {
+			throw AppException.of(ProductErrorCode.ALREADY_EXIST);
+		}
 
 		stock.changeSoldOutTo(false);
 		refreshMinStockOfOption(request.getProductId(), request.getOptionId());

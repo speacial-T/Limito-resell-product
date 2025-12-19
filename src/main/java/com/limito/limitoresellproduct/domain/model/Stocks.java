@@ -10,6 +10,8 @@ public class Stocks {
 
 	public static MinimumPriceStock calculateMinStock(List<Stock> stocks) {
 		MinimumPriceStock minStock = stocks.stream()
+			.filter(stock -> !stock.isDeleted())
+			.filter(stock -> !stock.isSoldOut())
 			.min(Comparator.comparing(Stock::getPrice))
 			.map(stock -> new MinimumPriceStock(stock.getId(), stock.getPrice()))
 			.orElse(new MinimumPriceStock(null, null));

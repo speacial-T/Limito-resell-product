@@ -82,4 +82,13 @@ public class Stock extends BaseEntity {
 		}
 		this.sellerId = userId.get();
 	}
+
+	public void checkActive() {
+		if (this.isDeleted()) {
+			throw AppException.of(ProductErrorCode.INACTIVE_STOCK);
+		}
+		if (this.soldOut) {
+			throw AppException.of(ProductErrorCode.OUT_OF_STOCK);
+		}
+	}
 }
