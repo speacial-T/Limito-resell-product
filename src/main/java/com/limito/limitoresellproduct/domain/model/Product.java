@@ -124,6 +124,6 @@ public class Product extends BaseEntity {
 			throw new AppException(ProductErrorCode.WRONG_OPTION_ID);
 		}
 
-		option.checkActive();
+		option.validateActive();
 	}
 }

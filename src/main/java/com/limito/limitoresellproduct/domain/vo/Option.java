@@ -133,6 +133,6 @@ public class Option {
 		return this.optionId.equals(optionId);
 	}
 
-	public void checkActive() {
+	public void validateActive() {
 	}
 }
