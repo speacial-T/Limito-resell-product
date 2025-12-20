@@ -51,11 +51,11 @@ public class ResellProductController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	@GetMapping("/view/{resellProductId}")
+	@GetMapping("/view/{modelId}")
 	public ResponseEntity<ProductGetResponseV1> getProduct(
-		@PathVariable @NotNull(message = "상품 상세 조회 시 상품ID는 필수 입력값입니다.") UUID resellProductId
+		@PathVariable @NotNull(message = "상품 상세 조회 시 모델ID는 필수 입력값입니다.") UUID modelId
 	) {
-		ProductGetResponseV1 response = resellProductService.getProduct(resellProductId);
+		ProductGetResponseV1 response = resellProductService.getProduct(modelId);
 		return ResponseEntity.ok().body(response);
 	}
 
