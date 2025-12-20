@@ -25,6 +25,7 @@ public class MinimumPriceStock {
 	public MinimumPriceStock(UUID stockId, Integer price, Long sellerId) {
 		this.stockId = stockId;
 		setPrice(price);
+		this.sellerId = sellerId;
 	}
 
 	private void setPrice(Integer price) {

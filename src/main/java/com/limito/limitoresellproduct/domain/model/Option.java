@@ -115,7 +115,7 @@ public class Option extends BaseEntity {
 	private void setMinimumPriceStock(MinimumPriceStock stock) {
 		this.inStock = true;
 		if (stock == null) {
-			stock = new MinimumPriceStock(null, null);
+			stock = new MinimumPriceStock(null, null, null);
 			this.inStock = false;
 		}
 		this.minimumPriceStock = stock;

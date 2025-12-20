@@ -13,8 +13,8 @@ public class Stocks {
 			.filter(stock -> !stock.isDeleted())
 			.filter(stock -> !stock.isSoldOut())
 			.min(Comparator.comparing(Stock::getPrice))
-			.map(stock -> new MinimumPriceStock(stock.getId(), stock.getPrice()))
-			.orElse(new MinimumPriceStock(null, null));
+			.map(stock -> new MinimumPriceStock(stock.getId(), stock.getPrice(), stock.getSellerId()))
+			.orElse(new MinimumPriceStock(null, null, null));
 
 		return minStock;
 	}
