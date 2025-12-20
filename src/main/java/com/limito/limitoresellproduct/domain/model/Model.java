@@ -3,10 +3,9 @@ package com.limito.limitoresellproduct.domain.model;
 import java.util.List;
 import java.util.UUID;
 
-import com.limito.common.audit.BaseEntity;
 import com.limito.common.exception.AppException;
+import com.limito.common.security.audit.BaseEntity;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
-import com.limito.limitoresellproduct.domain.vo.Product;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 
 import jakarta.persistence.CascadeType;
@@ -84,7 +83,7 @@ public class Model extends BaseEntity {
 
 	public void validateActive() {
 		if (this.isDeleted()) {
-			throw new AppException(ProductErrorCode.INACTIVE_MODEL);
+			throw AppException.of(ProductErrorCode.INACTIVE_MODEL);
 		}
 	}
 

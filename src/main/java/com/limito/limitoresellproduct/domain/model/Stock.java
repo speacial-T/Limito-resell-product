@@ -3,9 +3,9 @@ package com.limito.limitoresellproduct.domain.model;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.limito.common.audit.BaseEntity;
-import com.limito.common.audit.UserContextHolder;
 import com.limito.common.exception.AppException;
+import com.limito.common.security.audit.BaseEntity;
+import com.limito.common.security.context.UserContextHolder;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 
 import jakarta.persistence.Column;

@@ -1,13 +1,22 @@
-package com.limito.limitoresellproduct.domain.vo;
+package com.limito.limitoresellproduct.domain.model;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.limito.common.exception.AppException;
+import com.limito.common.security.audit.BaseEntity;
+import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,6 +60,7 @@ public class Option extends BaseEntity {
 	public static Option create(String size) {
 		Option option = new Option();
 		option.setSize(size);
+		option.setMinimumPriceStock(null);
 		return option;
 	}
 
@@ -101,23 +111,6 @@ public class Option extends BaseEntity {
 		}
 		this.size = size;
 	}
-
-	// private void setColor(String color) {
-	// 	if (color == null || color.isBlank()) {
-	// 		color = "one color";
-	// 	}
-	// 	this.color = color;
-	// }
-	//
-	// private void setThumbnailUrl(String thumbnailUrl) {
-	// 	if (thumbnailUrl == null || thumbnailUrl.isBlank()) {
-	// 		throw AppException.of(
-	// 			ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
-	// 			ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 대표 이미지는 필수 입력값입니다."
-	// 		);
-	// 	}
-	// 	this.thumbnailUrl = thumbnailUrl;
-	// }
 
 	private void setMinimumPriceStock(MinimumPriceStock stock) {
 		this.inStock = true;
