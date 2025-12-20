@@ -1,11 +1,9 @@
 package com.limito.limitoresellproduct.domain.vo;
 
-import java.util.List;
 import java.util.UUID;
 
 import com.limito.common.audit.BaseEntity;
 import com.limito.common.exception.AppException;
-import com.limito.limitoresellproduct.domain.model.Option;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 
 import jakarta.persistence.Column;
@@ -37,7 +35,7 @@ public class Product extends BaseEntity {
 	@Column(name = "category_id", nullable = false)
 	private UUID categoryId;
 
-	public Product(String name, String brandName, UUID categoryId, List<Option> options) {
+	public Product(String name, String brandName, UUID categoryId) {
 		setName(name);
 		setBrandName(brandName);
 		setCategoryId(categoryId);

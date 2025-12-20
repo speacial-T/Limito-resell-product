@@ -2,6 +2,7 @@ package com.limito.limitoresellproduct.domain.model;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.limito.common.audit.BaseEntity;
 import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
@@ -10,9 +11,12 @@ import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +30,13 @@ public class Option extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID optionId;
 
-	@Column(name = "model_id", nullable = false)
+	@Column(name = "model_id")
 	private UUID modelId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "model_id", insertable = false, updatable = false)
+	@JsonIgnore
+	private Model model;
 
 	@Column(name = "size", nullable = false, length = 10)
 	private String size;
@@ -46,6 +55,12 @@ public class Option extends BaseEntity {
 		setModelid(modelId);
 		setSize(size);
 		setMinimumPriceStock(minimumPriceStock);
+	}
+
+	public static Option create(String size) {
+		Option option = new Option();
+		option.setSize(size);
+		return option;
 	}
 
 	public void setOneOption() {
@@ -73,6 +88,10 @@ public class Option extends BaseEntity {
 		if (this.isDeleted()) {
 			throw AppException.of(ProductErrorCode.INACTIVE_OPTION);
 		}
+	}
+
+	public void giveModelId(UUID modelId) {
+		this.modelId = modelId;
 	}
 
 	private void setModelid(UUID modelId) {

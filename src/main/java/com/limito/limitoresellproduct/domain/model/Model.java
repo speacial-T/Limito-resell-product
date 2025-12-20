@@ -9,6 +9,7 @@ import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.domain.vo.Product;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,11 +20,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "p_resell_models")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Model extends BaseEntity {
 
 	@Id
@@ -46,7 +49,8 @@ public class Model extends BaseEntity {
 	@JoinColumn(name = "product_id", nullable = false)
 	private Product product;
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "model_id")
 	private List<Option> options;
 
 	public Model(
@@ -76,6 +80,22 @@ public class Model extends BaseEntity {
 			.filter(option -> option.isEqualId(optionId))
 			.findFirst()
 			.orElse(null);
+	}
+
+	public void validateActive() {
+		if (this.isDeleted()) {
+			throw new AppException(ProductErrorCode.INACTIVE_MODEL);
+		}
+	}
+
+	public void giveProduct(Product product) {
+		this.product = product;
+	}
+
+	public void giveModelIdToOptions() {
+		this.options.stream().forEach(option -> {
+			option.giveModelId(this.modelId);
+		});
 	}
 
 	private void setModelNumber(String modelNumber) {
