@@ -15,6 +15,7 @@ import com.limito.limitoresellproduct.domain.model.Stock;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
+import com.limito.limitoresellproduct.presentation.dto.response.OptionInfosGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductInfosGetResponseV1;
@@ -175,6 +176,19 @@ public class ProductMapper {
 			.categoryId(categoryId)
 			.category("임시 카테고리명")
 			.products(new PagedModel<>(mapped))
+			.build();
+	}
+
+	public static OptionInfosGetResponseV1 toOptionInfosGetResponseV1(Model model, Option option) {
+		return OptionInfosGetResponseV1.builder()
+			.productType("RESELL")
+			.productName(model.getProduct().getName())
+			.brandName(model.getProduct().getBrandName())
+			.productColor(model.getColor())
+			.thumbnailUrl(model.getThumbnailUrl())
+			.productSize(option.getSize())
+			.productPrice(option.getMinimumPriceStock().getPrice())
+			.sellerId(option.getMinimumPriceStock().getSellerId())
 			.build();
 	}
 }
