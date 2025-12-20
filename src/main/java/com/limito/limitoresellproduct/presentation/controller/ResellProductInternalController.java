@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.limito.limitoresellproduct.application.service.ProductStockService;
 import com.limito.limitoresellproduct.application.service.ResellStockService;
-import com.limito.limitoresellproduct.presentation.dto.request.ProductInfosGetRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.request.StockReduceRequest;
 import com.limito.limitoresellproduct.presentation.dto.request.StockRollbackRequest;
 import com.limito.limitoresellproduct.presentation.dto.response.OptionInfosGetResponseV1;
@@ -54,11 +53,11 @@ public class ResellProductInternalController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/productInfo")
+	@GetMapping("/productInfo")
 	public ResponseEntity<List<ProductInfosGetResponseV1>> getProductInfos(
-		@Valid @RequestBody List<ProductInfosGetRequestV1> request
+		@Valid @RequestParam List<UUID> stockIds
 	) {
-		List<ProductInfosGetResponseV1> response = productStockService.getProdutctInfos(request);
+		List<ProductInfosGetResponseV1> response = productStockService.getProdutctInfos(stockIds);
 		return ResponseEntity.ok().body(response);
 	}
 
