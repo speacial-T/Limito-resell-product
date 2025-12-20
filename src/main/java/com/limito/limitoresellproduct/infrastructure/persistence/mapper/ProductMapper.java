@@ -3,21 +3,23 @@ package com.limito.limitoresellproduct.infrastructure.persistence.mapper;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Component;
 
+import com.limito.limitoresellproduct.domain.model.Model;
+import com.limito.limitoresellproduct.domain.model.Option;
 import com.limito.limitoresellproduct.domain.model.Product;
 import com.limito.limitoresellproduct.domain.model.Stock;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
-import com.limito.limitoresellproduct.domain.vo.Option;
-import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductInfosGetResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.ProductsGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
 
 import jakarta.validation.Valid;
 
@@ -57,6 +59,10 @@ public class ProductMapper {
 				model.getProduct().getBrandName(),
 				model.getProduct().getCategoryId()
 			))
+			.modelNumber(model.getModelNumber())
+			.color(model.getColor())
+			.thumbnailUrl(model.getThumbnailUrl())
+			.details(model.getDetails())
 			.options(model.getOptions().stream()
 				.map(o -> new ProductCreateResponseV1.OptionResponseV1(
 					o.getOptionId(),
@@ -100,6 +106,7 @@ public class ProductMapper {
 				return new ProductGetResponseV1.ProductGetResponseOption(
 					option.getOptionId(),
 					option.getSize(),
+					option.isInStock(),
 					minStockRes
 				);
 			})
@@ -109,6 +116,11 @@ public class ProductMapper {
 			.productId(model.getProduct().getProductId())
 			.productName(model.getProduct().getName())
 			.brandName(model.getProduct().getBrandName())
+			.modelId(model.getModelId())
+			.modelNumber(model.getModelNumber())
+			.color(model.getColor())
+			.thumbnailUrl(model.getThumbnailUrl())
+			.details(model.getDetails())
 			.options(mappedOptions)
 			.build();
 	}
@@ -128,28 +140,26 @@ public class ProductMapper {
 			.build();
 	}
 
-	public static ProductsGetResponseV1 toProductsGetResponseV1(UUID categoryId, Page<Product> products) {
+	public static ProductsGetResponseV1 toProductsGetResponseV1(UUID categoryId, Page<Model> models) {
 		List<ProductsGetResponseV1.ProductGetResponse> content =
-			products.getContent().stream()
-				.flatMap(product ->
-					product.getOptions().stream()
+			models.getContent()
+				.stream()
+				.flatMap(model ->
+					model.getOptions()
+						.stream()
 						.map(option -> {
 							MinimumPriceStock stock = option.getMinimumPriceStock();
 
-							return new ProductsGetResponseV1.ProductGetResponse(
-								product.getProductId(),
-								product.getName(),
-								product.getBrandName(),
-								option.getOptionId(),
-								option.getModelNumber(),
-								option.getColor(),
-								option.getSize(),
-								option.getThumbnailUrl(),
-								option.getDetails(),
-								option.isInStock(),
-								stock.getStockId(),
-								stock.getPrice()
-							);
+							return ProductsGetResponseV1.ProductGetResponse.builder()
+								.productId(model.getProduct().getProductId())
+								.productName(model.getProduct().getName())
+								.brandName(model.getProduct().getBrandName())
+								.modelId(model.getModelId())
+								.modelNumber(model.getModelNumber())
+								.color(model.getColor())
+								.thumbnailUrl(model.getThumbnailUrl())
+								.details(model.getDetails())
+								.build();
 						})
 				)
 				.toList();
@@ -157,7 +167,7 @@ public class ProductMapper {
 		Page<ProductsGetResponseV1.ProductGetResponse> mapped =
 			new PageImpl<>(
 				content,
-				products.getPageable(),
+				models.getPageable(),
 				content.size()
 			);
 
