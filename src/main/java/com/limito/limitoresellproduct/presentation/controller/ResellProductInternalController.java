@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.limito.limitoresellproduct.application.service.ProductStockService;
@@ -14,6 +16,7 @@ import com.limito.limitoresellproduct.application.service.ResellStockService;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductInfosGetRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.request.StockReduceRequest;
 import com.limito.limitoresellproduct.presentation.dto.request.StockRollbackRequest;
+import com.limito.limitoresellproduct.presentation.dto.response.OptionInfosGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductInfosGetResponseV1;
 
 import jakarta.validation.Valid;
@@ -56,6 +59,14 @@ public class ResellProductInternalController {
 		@Valid @RequestBody List<ProductInfosGetRequestV1> request
 	) {
 		List<ProductInfosGetResponseV1> response = productStockService.getProdutctInfos(request);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/optionInfo")
+	public ResponseEntity<List<OptionInfosGetResponseV1>> getOptionInfos(
+		@Valid @RequestParam List<UUID> optionIds
+	) {
+		List<OptionInfosGetResponseV1> response = productStockService.getOptiontInfos(optionIds);
 		return ResponseEntity.ok().body(response);
 	}
 }
