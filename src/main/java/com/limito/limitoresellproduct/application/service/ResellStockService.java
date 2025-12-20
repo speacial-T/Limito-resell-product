@@ -6,10 +6,13 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.limito.common.exception.AppException;
+import com.limito.common.security.audit.UserRole;
+import com.limito.common.security.auth.PreAuthorized;
 import com.limito.limitoresellproduct.domain.model.Stock;
-import com.limito.limitoresellproduct.domain.model.Stocks;
 import com.limito.limitoresellproduct.domain.repository.ResellStockRepository;
 import com.limito.limitoresellproduct.domain.repository.StockInMemoryRepository;
+import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
+import com.limito.limitoresellproduct.domain.vo.Stocks;
 import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductMapper;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
@@ -36,7 +39,7 @@ public class ResellStockService {
 	public StockCreateResponseV1 createStock(@Valid StockCreateRequestV1 request) {
 		Stock stock = ProductMapper.toEntity(request);
 
-		productService.validateProductAndOption(request.getProductId(), request.getOptionId());
+		productService.validateModelAndOption(request.getModelId(), request.getOptionId());
 
 		Stock savedStock = resellStockRepository.saveStock(stock);
 
