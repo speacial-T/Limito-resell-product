@@ -18,16 +18,16 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ProductStockService {
-	private final ResellModelRepository resellProductRepository;
+	private final ResellModelRepository resellModelRepository;
 	private final ResellStockRepository resellStockRepository;
 
 	public List<ProductInfosGetResponseV1> getProdutctInfos(List<ProductInfosGetRequestV1> requests) {
 		List<ProductInfosGetResponseV1> response = requests.stream()
 			.map(request -> {
-				Model product = resellProductRepository.findById(request.getProductId());
-				Option option = product.getOption(request.getOptionId());
-				Stock stock = resellStockRepository.findById(request.getStockId());
-				return ProductMapper.toProductInfosGetResponseV1(product, option, stock);
+				Model model = resellModelRepository.findByOptionIdOrElseThrow(request.getOptionId());
+				Option option = model.getOption(request.getOptionId());
+				Stock stock = resellStockRepository.findByIdOrElseThrow(request.getStockId());
+				return ProductMapper.toProductInfosGetResponseV1(model, option, stock);
 			})
 			.toList();
 
