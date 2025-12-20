@@ -5,17 +5,17 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import com.limito.limitoresellproduct.domain.model.Model;
-import com.limito.limitoresellproduct.domain.model.Option;
+import com.limito.limitoresellproduct.domain.model.Product;
 import com.limito.limitoresellproduct.domain.model.Stock;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
-import com.limito.limitoresellproduct.domain.vo.Product;
+import com.limito.limitoresellproduct.domain.vo.Option;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductInfosGetResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
 
@@ -113,26 +113,6 @@ public class ProductMapper {
 			.build();
 	}
 
-	public static StockReduceResponseV1 toStockReduceResponseV1(ProductErrorCode failReason, List<UUID> stockIds) {
-		return StockReduceResponseV1.builder()
-			.errorCode(failReason.getMessage()
-				.substring(0, 4))
-			.message(failReason.getMessage()
-				.substring(7))
-			.stockIds(stockIds)
-			.build();
-	}
-
-	// public static StockCancelResponseV1 toStockCancelResponseV1(ProductErrorCode failReason, List<UUID> stockIds) {
-	// 	return StockCancelResponseV1.builder()
-	// 		.errorCode(failReason.getMessage()
-	// 			.substring(0, 4))
-	// 		.message(failReason.getMessage()
-	// 			.substring(7))
-	// 		.stockIds(stockIds)
-	// 		.build();
-	// }
-
 	public static ProductInfosGetResponseV1 toProductInfosGetResponseV1(Model model, Option option, Stock stock) {
 		return ProductInfosGetResponseV1.builder()
 			.productId(model.getProduct().getProductId())
@@ -145,6 +125,46 @@ public class ProductMapper {
 			.productSize(option.getSize())
 			.productPrice(stock.getPrice())
 			.sellerId(stock.getSellerId())
+			.build();
+	}
+
+	public static ProductsGetResponseV1 toProductsGetResponseV1(UUID categoryId, Page<Product> products) {
+		List<ProductsGetResponseV1.ProductGetResponse> content =
+			products.getContent().stream()
+				.flatMap(product ->
+					product.getOptions().stream()
+						.map(option -> {
+							MinimumPriceStock stock = option.getMinimumPriceStock();
+
+							return new ProductsGetResponseV1.ProductGetResponse(
+								product.getProductId(),
+								product.getName(),
+								product.getBrandName(),
+								option.getOptionId(),
+								option.getModelNumber(),
+								option.getColor(),
+								option.getSize(),
+								option.getThumbnailUrl(),
+								option.getDetails(),
+								option.isInStock(),
+								stock.getStockId(),
+								stock.getPrice()
+							);
+						})
+				)
+				.toList();
+
+		Page<ProductsGetResponseV1.ProductGetResponse> mapped =
+			new PageImpl<>(
+				content,
+				products.getPageable(),
+				content.size()
+			);
+
+		return ProductsGetResponseV1.builder()
+			.categoryId(categoryId)
+			.category("임시 카테고리명")
+			.products(new PagedModel<>(mapped))
 			.build();
 	}
 }

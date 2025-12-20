@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.domain.model.Stock;
+import com.limito.limitoresellproduct.domain.model.Stocks;
 import com.limito.limitoresellproduct.domain.repository.ResellStockRepository;
 import com.limito.limitoresellproduct.domain.repository.StockInMemoryRepository;
-import com.limito.limitoresellproduct.domain.vo.Stocks;
 import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductMapper;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
@@ -31,6 +31,7 @@ public class ResellStockService {
 
 	private static final String REDIS_STOCK_PREFIX_KEY = "resell-stock:";
 
+	@PreAuthorized(UserRole.USER)
 	@Transactional
 	public StockCreateResponseV1 createStock(@Valid StockCreateRequestV1 request) {
 		Stock stock = ProductMapper.toEntity(request);
@@ -53,16 +54,8 @@ public class ResellStockService {
 	private void reserveStock(UUID stockId) {
 		String key = REDIS_STOCK_PREFIX_KEY + stockId;
 
-		Stock stock = resellStockRepository.findById(stockId);
-		if (stock == null) {
-			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
-		}
-		stock.checkActive();
-
-		if (stockInMemoryRepository.get(key) != null) {
-			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
-		}
-
+		resellStockRepository.findByIdOrElseThrow(stockId);
+		stockInMemoryRepository.getOrElseThrow(key);
 		stockInMemoryRepository.set(key, "1");
 	}
 
@@ -93,28 +86,20 @@ public class ResellStockService {
 	private void deleteReservedStock(UUID stockId) {
 		String key = REDIS_STOCK_PREFIX_KEY + stockId;
 
-		String reservedStock = stockInMemoryRepository.get(key);
-		if (reservedStock == null) {
-			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
-		}
-
+		stockInMemoryRepository.getOrElseThrow(key);
 		stockInMemoryRepository.delete(key);
 	}
 
 	private void sellStock(UUID stockId) {
-		Stock stock = resellStockRepository.findById(stockId);
-		if (stock == null) {
-			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
-		}
+		Stock stock = resellStockRepository.findByIdOrElseThrow(stockId);
 		stock.checkActive();
-
 		stock.changeSoldOutTo(true);
 	}
 
 	private void refreshMinStockOfOption(UUID productId, UUID optionId) {
 		List<Stock> stocks = resellStockRepository.findAllByOptionId(optionId);
-		Stock minStock = Stocks.calculateMinStock(stocks);
-		productService.changeMinimumPriceStock(productId, optionId, minStock.getId(), minStock.getPrice());
+		MinimumPriceStock minStock = Stocks.calculateMinStock(stocks);
+		productService.changeMinimumPriceStock(productId, optionId, minStock);
 	}
 
 	@Transactional
@@ -125,13 +110,10 @@ public class ResellStockService {
 	}
 
 	private void rollbackStock(StockRollbackRequest request) {
-		Stock stock = resellStockRepository.findById(request.getStockId());
-		if (stock == null) {
-			throw new AppException(ProductErrorCode.WRONG_STOCK_ID);
-		}
+		Stock stock = resellStockRepository.findByIdOrElseThrow(request.getStockId());
 
 		if (!stock.isSoldOut()) {
-			throw new AppException(ProductErrorCode.ALREADY_EXIST);
+			throw AppException.of(ProductErrorCode.ALREADY_EXIST);
 		}
 
 		stock.changeSoldOutTo(false);

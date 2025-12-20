@@ -14,15 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.limito.common.audit.UserContextHolder;
-import com.limito.common.audit.UserRole;
-import com.limito.common.code.CommonErrorCode;
-import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.application.service.ResellProductService;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.ProductReadResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.ProductsGetResponseV1;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -37,17 +33,16 @@ public class ResellProductController {
 
 	@PostMapping
 	public ResponseEntity<ProductCreateResponseV1> createProduct(@Valid @RequestBody ProductCreateRequestV1 request) {
-		// checkRole(UserRole.ADMIN);
 		ProductCreateResponseV1 response = resellProductService.createProduct(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@GetMapping("/view")
-	public ResponseEntity<ProductReadResponseV1> getProducts(
+	public ResponseEntity<ProductsGetResponseV1> getProducts(
 		@RequestParam @NotNull(message = "상품 목록 조회 시 카테고리ID는 필수 입력값입니다.") UUID categoryId,
 		@PageableDefault Pageable pageable
 	) {
-		ProductReadResponseV1 response = resellProductService.getProducts(categoryId, pageable);
+		ProductsGetResponseV1 response = resellProductService.getProducts(categoryId, pageable);
 		return ResponseEntity.ok().body(response);
 	}
 
@@ -57,15 +52,5 @@ public class ResellProductController {
 	) {
 		ProductGetResponseV1 response = resellProductService.getProduct(modelId);
 		return ResponseEntity.ok().body(response);
-	}
-
-	private void checkRole(UserRole expectedRole) {
-		UserRole role = UserContextHolder.getCurrentUserRole().orElseThrow(() ->
-			AppException.of(CommonErrorCode.UNAUTHORIZED)
-		);
-
-		if (!role.equals(expectedRole)) {
-			throw new AppException(CommonErrorCode.FORBIDDEN);
-		}
 	}
 }

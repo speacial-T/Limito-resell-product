@@ -7,12 +7,12 @@ import lombok.Getter;
 
 @Getter
 public class ProductInfosGetRequestV1 {
-	@NotNull
+	@NotNull(message = "상품 ID는 필수 입력값입니다.")
 	private UUID productId;
 
-	@NotNull
+	@NotNull(message = "옵션 ID는 필수 입력값입니다.")
 	private UUID optionId;
 
-	@NotNull
+	@NotNull(message = "재고 ID는 필수 입력값입니다.")
 	private UUID stockId;
 }

@@ -18,6 +18,7 @@ public class ProductGetResponseV1 {
 	public record ProductGetResponseOption(
 		UUID optionId,
 		String size,
+		boolean inStock,
 		ProductGetResponseMinStock minStock
 	) {
 	}

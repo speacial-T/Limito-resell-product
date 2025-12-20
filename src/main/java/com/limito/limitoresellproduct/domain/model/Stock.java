@@ -91,4 +91,5 @@ public class Stock extends BaseEntity {
 		}
 		this.sellerId = userId.get();
 	}
+
 }
