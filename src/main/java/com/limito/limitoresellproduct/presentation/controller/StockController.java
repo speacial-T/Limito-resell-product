@@ -22,7 +22,7 @@ public class StockController {
 	private final ResellStockService stockService;
 
 	@PostMapping("/stock")
-	public ResponseEntity<StockCreateResponseV1> createProduct(@Valid @RequestBody StockCreateRequestV1 request) {
+	public ResponseEntity<StockCreateResponseV1> createStock(@Valid @RequestBody StockCreateRequestV1 request) {
 		StockCreateResponseV1 response = stockService.createStock(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
