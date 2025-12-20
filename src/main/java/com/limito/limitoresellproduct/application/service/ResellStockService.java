@@ -58,7 +58,10 @@ public class ResellStockService {
 		String key = REDIS_STOCK_PREFIX_KEY + stockId;
 
 		resellStockRepository.findByIdOrElseThrow(stockId);
-		stockInMemoryRepository.getOrElseThrow(key);
+		String reservedStock = stockInMemoryRepository.get(key);
+		if (reservedStock != null) {
+			throw AppException.of(ProductErrorCode.OUT_OF_STOCK);
+		}
 		stockInMemoryRepository.set(key, "1");
 	}
 
