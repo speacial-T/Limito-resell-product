@@ -38,19 +38,19 @@ public class ResellProductController {
 	}
 
 	@GetMapping("/view")
-	public ResponseEntity<ProductsGetResponseV1> getProducts(
+	public ResponseEntity<ProductsGetResponseV1> getModels(
 		@RequestParam @NotNull(message = "상품 목록 조회 시 카테고리ID는 필수 입력값입니다.") UUID categoryId,
 		@PageableDefault Pageable pageable
 	) {
-		ProductsGetResponseV1 response = resellProductService.getProducts(categoryId, pageable);
+		ProductsGetResponseV1 response = resellProductService.getModels(categoryId, pageable);
 		return ResponseEntity.ok().body(response);
 	}
 
 	@GetMapping("/view/{modelId}")
-	public ResponseEntity<ProductGetResponseV1> getProduct(
+	public ResponseEntity<ProductGetResponseV1> getModel(
 		@PathVariable @NotNull(message = "상품 상세 조회 시 모델ID는 필수 입력값입니다.") UUID modelId
 	) {
-		ProductGetResponseV1 response = resellProductService.getProduct(modelId);
+		ProductGetResponseV1 response = resellProductService.getModel(modelId);
 		return ResponseEntity.ok().body(response);
 	}
 }
