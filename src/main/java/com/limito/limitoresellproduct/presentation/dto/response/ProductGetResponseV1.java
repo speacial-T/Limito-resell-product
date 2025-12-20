@@ -9,10 +9,14 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ProductGetResponseV1 {
-
 	private UUID productId;
 	private String productName;
 	private String brandName;
+	private UUID modelId;
+	private String modelNumber;
+	private String color;
+	private String thumbnailUrl;
+	private String details;
 	private List<ProductGetResponseOption> options;
 
 	public record ProductGetResponseOption(

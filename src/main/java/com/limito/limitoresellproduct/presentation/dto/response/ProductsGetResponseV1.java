@@ -21,15 +21,11 @@ public class ProductsGetResponseV1 {
 		UUID productId,
 		String productName,
 		String brandName,
-		UUID optionId,
+		UUID modelId,
 		String modelNumber,
-		String size,
 		String color,
 		String thumbnailUrl,
-		String details,
-		boolean inStock,
-		UUID minStockId,
-		int minStockPrice
+		String details
 	) {
 	}
 }
