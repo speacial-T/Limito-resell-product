@@ -47,7 +47,7 @@ public class Model extends BaseEntity {
 	private Product product;
 
 	@OneToMany
-	private List<Optiono> options;
+	private List<Option> options;
 
 	public Model(
 		String modelNumber,
@@ -55,7 +55,7 @@ public class Model extends BaseEntity {
 		String thumbnailUrl,
 		String details,
 		Product product,
-		List<Optiono> options
+		List<Option> options
 	) {
 		setModelNumber(modelNumber);
 		setColor(color);
@@ -67,11 +67,11 @@ public class Model extends BaseEntity {
 
 	public void changeMinimumPriceStock(UUID optionId, MinimumPriceStock newStock) {
 		this.validOptionActive(optionId);
-		Optiono option = this.getOption(optionId);
+		Option option = this.getOption(optionId);
 		option.changeMinimumPriceStock(newStock);
 	}
 
-	public Optiono getOption(UUID optionId) {
+	public Option getOption(UUID optionId) {
 		return options.stream()
 			.filter(option -> option.isEqualId(optionId))
 			.findFirst()
@@ -115,7 +115,7 @@ public class Model extends BaseEntity {
 		this.product = product;
 	}
 
-	private void setOptions(List<Optiono> options) {
+	private void setOptions(List<Option> options) {
 		if (options == null) {
 			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
@@ -129,7 +129,7 @@ public class Model extends BaseEntity {
 	}
 
 	private void validOptionActive(UUID optionId) {
-		Optiono option = this.getOption(optionId);
+		Option option = this.getOption(optionId);
 		if (option == null) {
 			throw AppException.of(ProductErrorCode.WRONG_OPTION_ID);
 		}
