@@ -1,30 +1,25 @@
-package com.limito.limitoresellproduct.domain.model;
+package com.limito.limitoresellproduct.domain.vo;
 
 import java.util.List;
 import java.util.UUID;
 
 import com.limito.common.audit.BaseEntity;
 import com.limito.common.exception.AppException;
-import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
-import com.limito.limitoresellproduct.domain.vo.Option;
+import com.limito.limitoresellproduct.domain.model.Option;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Table(name = "p_resell_products")
+@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Product extends BaseEntity {
@@ -42,18 +37,10 @@ public class Product extends BaseEntity {
 	@Column(name = "category_id", nullable = false)
 	private UUID categoryId;
 
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(
-		name = "p_resell_product_options",
-		joinColumns = @JoinColumn(name = "product_id")
-	)
-	private List<Option> options;
-
 	public Product(String name, String brandName, UUID categoryId, List<Option> options) {
 		setName(name);
 		setBrandName(brandName);
 		setCategoryId(categoryId);
-		setOptions(options);
 	}
 
 	private void setName(String name) {
@@ -86,44 +73,9 @@ public class Product extends BaseEntity {
 		this.categoryId = categoryId;
 	}
 
-	private void setOptions(List<Option> options) {
-		if (options == null) {
-			throw new AppException(
-				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
-				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 옵션은 적어도 하나 있어야 합니다."
-			);
-		}
-		if (options.size() == 1) {
-			options.get(0).setOneOption();
-		}
-		this.options = options;
-	}
-
-	public void changeMinimumPriceStock(UUID optionId, MinimumPriceStock newStock) {
-		this.validOptionActive(optionId);
-		Option option = this.getOption(optionId);
-		option.changeMinimumPriceStock(newStock);
-	}
-
-	public Option getOption(UUID optionId) {
-		return options.stream()
-			.filter(option -> option.isEqualId(optionId))
-			.findFirst()
-			.orElse(null);
-	}
-
 	public void validateActive() {
 		if (this.isDeleted()) {
 			throw new AppException(ProductErrorCode.INACTIVE_PRODUCT);
 		}
-	}
-
-	private void validOptionActive(UUID optionId) {
-		Option option = this.getOption(optionId);
-		if (option == null) {
-			throw new AppException(ProductErrorCode.WRONG_OPTION_ID);
-		}
-
-		option.checkActive();
 	}
 }

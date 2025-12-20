@@ -48,9 +48,22 @@ public class Stock extends BaseEntity {
 		setSellerId();
 	}
 
+	public void changeSoldOutTo(boolean soldOut) {
+		this.soldOut = soldOut;
+	}
+
+	public void checkActive() {
+		if (this.isDeleted()) {
+			throw AppException.of(ProductErrorCode.INACTIVE_STOCK);
+		}
+		if (this.soldOut) {
+			throw AppException.of(ProductErrorCode.OUT_OF_STOCK);
+		}
+	}
+
 	private void setOptionId(UUID optionId) {
 		if (optionId == null) {
-			throw new AppException(
+			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
 				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 옵션ID는 필수 입력값입니다."
 			);
@@ -60,7 +73,7 @@ public class Stock extends BaseEntity {
 
 	private void setPrice(int price) {
 		if (price < 0) {
-			throw new AppException(
+			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
 				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 가격은 0이상 이어야 합니다."
 			);
@@ -71,24 +84,11 @@ public class Stock extends BaseEntity {
 	private void setSellerId() {
 		Optional<Long> userId = UserContextHolder.getCurrentUserId();
 		if (userId.isEmpty()) {
-			throw new AppException(
+			throw AppException.of(
 				ProductErrorCode.INVALID_DOMAIN_INFO.getStatus(),
 				ProductErrorCode.INVALID_DOMAIN_INFO.getMessage() + ": 판매자를 알 수 없습니다."
 			);
 		}
 		this.sellerId = userId.get();
-	}
-
-	public void changeSoldOutTo(boolean soldOut) {
-		this.soldOut = soldOut;
-	}
-
-	public void checkActive() {
-		if (this.isDeleted()) {
-			throw new AppException(ProductErrorCode.INACTIVE_STOCK);
-		}
-		if (this.soldOut) {
-			throw new AppException(ProductErrorCode.OUT_OF_STOCK);
-		}
 	}
 }
