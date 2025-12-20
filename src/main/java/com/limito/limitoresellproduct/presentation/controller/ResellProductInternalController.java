@@ -53,11 +53,11 @@ public class ResellProductInternalController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/productInfo")
-	public ResponseEntity<List<ProductInfosGetResponseV1>> getProductInfos(
+	@GetMapping("/stockInfo")
+	public ResponseEntity<List<ProductInfosGetResponseV1>> getStockInfos(
 		@Valid @RequestParam List<UUID> stockIds
 	) {
-		List<ProductInfosGetResponseV1> response = productStockService.getProdutctInfos(stockIds);
+		List<ProductInfosGetResponseV1> response = productStockService.getStockInfos(stockIds);
 		return ResponseEntity.ok().body(response);
 	}
 

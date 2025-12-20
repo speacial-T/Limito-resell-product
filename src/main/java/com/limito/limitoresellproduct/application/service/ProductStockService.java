@@ -23,7 +23,7 @@ public class ProductStockService {
 	private final ResellModelRepository resellModelRepository;
 	private final ResellStockRepository resellStockRepository;
 
-	public List<ProductInfosGetResponseV1> getProdutctInfos(List<UUID> stockIds) {
+	public List<ProductInfosGetResponseV1> getStockInfos(List<UUID> stockIds) {
 		List<ProductInfosGetResponseV1> response = stockIds.stream()
 			.map(stockId -> {
 				Stock stock = resellStockRepository.findById(stockId);
