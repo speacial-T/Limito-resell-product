@@ -11,9 +11,9 @@ public interface ResellModelRepository {
 
 	Model saveModel(Model model);
 
-	Model findById(UUID modelId);
-
-	Model findByIdForAllUser(UUID modelId);
-
 	Page<Model> findAllByCategoryIdForAllUser(UUID categoryId, Pageable pageable);
+
+	Model findByIdForAllUserOrElseThrow(UUID modelId);
+
+	Model findByOptionIdOrElseThrow(UUID optionId);
 }
