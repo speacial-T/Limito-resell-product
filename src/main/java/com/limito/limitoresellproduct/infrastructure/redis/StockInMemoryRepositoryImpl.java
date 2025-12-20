@@ -37,4 +37,10 @@ public class StockInMemoryRepositoryImpl implements StockInMemoryRepository {
 		}
 		return result;
 	}
+
+	@Override
+	public String get(String key) {
+		ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+		return ops.get(key);
+	}
 }
