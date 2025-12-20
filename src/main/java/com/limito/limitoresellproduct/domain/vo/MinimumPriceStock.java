@@ -19,7 +19,10 @@ public class MinimumPriceStock {
 	@Column(name = "min_price_stock_price")
 	private int price;
 
-	public MinimumPriceStock(UUID stockId, Integer price) {
+	@Column(name = "min_price_stock_seller_id")
+	private Long sellerId;
+
+	public MinimumPriceStock(UUID stockId, Integer price, Long sellerId) {
 		this.stockId = stockId;
 		setPrice(price);
 	}
