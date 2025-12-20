@@ -17,11 +17,7 @@ public class ProductGetResponseV1 {
 
 	public record ProductGetResponseOption(
 		UUID optionId,
-		String modelNumber,
 		String size,
-		String color,
-		String thumbnailUrl,
-		String details,
 		ProductGetResponseMinStock minStock
 	) {
 	}

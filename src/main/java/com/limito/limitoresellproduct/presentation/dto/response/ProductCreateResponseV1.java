@@ -3,8 +3,6 @@ package com.limito.limitoresellproduct.presentation.dto.response;
 import java.util.List;
 import java.util.UUID;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,28 +10,30 @@ import lombok.Getter;
 @Getter
 public class ProductCreateResponseV1 {
 
-	@NotNull
-	private UUID productId;
+	private ProductInfoResponse productInfo;
 
-	@NotBlank
-	private String productName;
+	private String modelNumber;
 
-	@NotBlank
-	private String brandName;
+	private String color;
 
-	@NotNull
-	private UUID categoryId;
+	private String thumbnailUrl;
 
-	@NotNull
+	private String details;
+
 	private List<OptionResponseV1> options;
+
+	public record ProductInfoResponse(
+		UUID productId,
+		String productName,
+		String brandName,
+		UUID categoryId
+	) {
+	}
 
 	public record OptionResponseV1(
 		UUID optionId,
-		String modelNumber,
+		UUID modelId,
 		String size,
-		String color,
-		String thumbnailUrl,
-		String details,
 		boolean inStock,
 		MinStockResponse minStock
 	) {

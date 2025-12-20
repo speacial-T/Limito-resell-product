@@ -7,10 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.limito.common.exception.AppException;
-import com.limito.limitoresellproduct.domain.model.Product;
-import com.limito.limitoresellproduct.domain.repository.ResellProductRepository;
+import com.limito.limitoresellproduct.domain.model.Model;
+import com.limito.limitoresellproduct.domain.model.Option;
+import com.limito.limitoresellproduct.domain.repository.ResellModelRepository;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
-import com.limito.limitoresellproduct.domain.vo.Option;
 import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductMapper;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
@@ -25,46 +25,46 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ResellProductService {
 
-	private final ResellProductRepository resellProductRepository;
+	private final ResellModelRepository resellModelRepository;
 
 	public ProductCreateResponseV1 createProduct(ProductCreateRequestV1 request) {
-		Product product = ProductMapper.toEntity(request);
-		Product savedProduct = resellProductRepository.saveProduct(product);
-		return ProductMapper.toProductCreateResponseV1(savedProduct);
+		Model model = ProductMapper.toEntity(request);
+		Model savedModel = resellModelRepository.saveModel(model);
+		return ProductMapper.toProductCreateResponseV1(savedModel);
 	}
 
 	@Transactional
 	public void changeMinimumPriceStock(UUID productId, UUID optionId, UUID stockId, int price) {
 		MinimumPriceStock minimumPriceStock = new MinimumPriceStock(stockId, price);
-		Product product = resellProductRepository.findById(productId);
-		if (product == null) {
+		Model model = resellModelRepository.findById(productId);
+		if (model == null) {
 			throw new AppException(ProductErrorCode.WRONG_PRODUCT_ID);
 		}
-		product.validateActive();
-		product.changeMinimumPriceStock(optionId, minimumPriceStock);
+		model.validateActive();
+		model.changeMinimumPriceStock(optionId, minimumPriceStock);
 	}
 
 	public ProductReadResponseV1 getProducts(UUID categoryId, Pageable pageable) {
-		Page<Product> products = resellProductRepository.findAllByCategoryIdForAllUser(categoryId, pageable);
-		return ProductReadResponseV1.of(categoryId, products);
+		Page<Model> models = resellModelRepository.findAllByCategoryIdForAllUser(categoryId, pageable);
+		return ProductReadResponseV1.of(categoryId, models);
 	}
 
 	public ProductGetResponseV1 getProduct(UUID resellProductId) {
-		Product product = resellProductRepository.findByIdForAllUser(resellProductId);
-		if (product == null) {
+		Model model = resellModelRepository.findByIdForAllUser(resellProductId);
+		if (model == null) {
 			throw new AppException(ProductErrorCode.WRONG_PRODUCT_ID);
 		}
-		return ProductMapper.toProductGetResponseV1(product);
+		return ProductMapper.toProductGetResponseV1(model);
 	}
 
 	public void validateProductAndOption(UUID productId, UUID optionId) {
-		Product product = resellProductRepository.findById(productId);
-		if (product == null) {
+		Model model = resellModelRepository.findById(productId);
+		if (model == null) {
 			throw new AppException(ProductErrorCode.WRONG_PRODUCT_ID);
 		}
-		product.validateActive();
+		model.validateActive();
 
-		Option option = product.getOption(optionId);
+		Option option = model.getOption(optionId);
 		if (option == null) {
 			throw new AppException(ProductErrorCode.WRONG_OPTION_ID);
 		}

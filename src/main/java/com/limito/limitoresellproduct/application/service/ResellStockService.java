@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.limito.common.exception.AppException;
 import com.limito.limitoresellproduct.domain.model.Stock;
-import com.limito.limitoresellproduct.domain.model.Stocks;
 import com.limito.limitoresellproduct.domain.repository.ResellStockRepository;
 import com.limito.limitoresellproduct.domain.repository.StockInMemoryRepository;
+import com.limito.limitoresellproduct.domain.vo.Stocks;
 import com.limito.limitoresellproduct.infrastructure.persistence.mapper.ProductMapper;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;

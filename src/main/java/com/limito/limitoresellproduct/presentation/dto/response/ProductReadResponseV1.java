@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
-import com.limito.limitoresellproduct.domain.model.Product;
+import com.limito.limitoresellproduct.domain.model.Model;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
 
 import lombok.Builder;
@@ -30,11 +30,11 @@ public class ProductReadResponseV1 {
 
 	private record OptionReadRes(
 		UUID optionId,
-		String modelNumber,
+		// String modelNumber,
 		String size,
-		String color,
-		String thumbnailUrl,
-		String details,
+		// String color,
+		// String thumbnailUrl,
+		// String details,
 		MinStockReadRes minStock
 	) {
 	}
@@ -45,11 +45,11 @@ public class ProductReadResponseV1 {
 	) {
 	}
 
-	public static ProductReadResponseV1 of(UUID categoryId, Page<Product> products) {
+	public static ProductReadResponseV1 of(UUID categoryId, Page<Model> models) {
 
-		Page<ProductReadRes> mapped = products.map(product -> {
+		Page<ProductReadRes> mapped = models.map(model -> {
 
-			List<OptionReadRes> mappedOptions = product.getOptions().stream()
+			List<OptionReadRes> mappedOptions = model.getOptions().stream()
 				.map(option -> {
 
 					MinimumPriceStock stock = option.getMinimumPriceStock();  // 엔티티 명은 상황에 맞게 변경
@@ -64,20 +64,20 @@ public class ProductReadResponseV1 {
 
 					return new OptionReadRes(
 						option.getOptionId(),
-						option.getModelNumber(),
+						// option.getModelNumber(),
 						option.getSize(),
-						option.getColor(),
-						option.getThumbnailUrl(),
-						option.getDetails(),
+						// option.getColor(),
+						// option.getThumbnailUrl(),
+						// option.getDetails(),
 						minStockRes
 					);
 				})
 				.toList();
 
 			return new ProductReadRes(
-				product.getProductId(),
-				product.getName(),
-				product.getBrandName(),
+				model.getProduct().getProductId(),
+				model.getProduct().getName(),
+				model.getProduct().getBrandName(),
 				mappedOptions
 			);
 		});
