@@ -37,16 +37,6 @@ public class ResellModelRepositoryImpl implements ResellModelRepository {
 	}
 
 	@Override
-	public Model findById(UUID modelId) {
-		return modelJpaRepository.findById(modelId).orElse(null);
-	}
-
-	@Override
-	public Model findByIdForAllUser(UUID modelId) {
-		return modelJpaRepository.findByModelIdAndDeletedAtIsNull(modelId).orElse(null);
-	}
-
-	@Override
 	public Page<Model> findAllByCategoryIdForAllUser(UUID categoryId, Pageable pageable) {
 		return modelJpaRepository.findAllByCategoryIdForAllUser(categoryId, pageable);
 	}
