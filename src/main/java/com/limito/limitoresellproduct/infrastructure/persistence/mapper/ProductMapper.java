@@ -5,17 +5,17 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import com.limito.limitoresellproduct.domain.model.Product;
+import com.limito.limitoresellproduct.domain.model.Model;
+import com.limito.limitoresellproduct.domain.model.Option;
 import com.limito.limitoresellproduct.domain.model.Stock;
 import com.limito.limitoresellproduct.domain.vo.MinimumPriceStock;
-import com.limito.limitoresellproduct.domain.vo.Option;
+import com.limito.limitoresellproduct.domain.vo.Product;
 import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.request.StockCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductInfosGetResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
 
@@ -24,25 +24,24 @@ import jakarta.validation.Valid;
 @Component
 public class ProductMapper {
 
-	public static Product toEntity(@Valid ProductCreateRequestV1 request) {
+	public static Model toEntity(@Valid ProductCreateRequestV1 request) {
 		List<Option> options = request.getOptions().stream()
-			.map(optionRequest -> new Option(
-				null,
-				optionRequest.modelNumber(),
-				optionRequest.size(),
-				optionRequest.color(),
-				optionRequest.thumbnailUrl(),
-				optionRequest.details(),
-				null)
-			)
+			.map(optionRequest -> Option.create(optionRequest.size()))
 			.toList();
 		Product product = new Product(
-			request.getProductName(),
-			request.getBrandName(),
-			request.getCategoryId(),
+			request.getProductInfo().productName(),
+			request.getProductInfo().brandName(),
+			request.getProductInfo().categoryId()
+		);
+		Model model = new Model(
+			request.getModelNumber(),
+			request.getColor(),
+			request.getThumbnailUrl(),
+			request.getDetails(),
+			product,
 			options
 		);
-		return product;
+		return model;
 	}
 
 	public static Stock toEntity(@Valid StockCreateRequestV1 request) {
@@ -50,20 +49,19 @@ public class ProductMapper {
 		return stock;
 	}
 
-	public static ProductCreateResponseV1 toProductCreateResponseV1(Product product) {
+	public static ProductCreateResponseV1 toProductCreateResponseV1(Model model) {
 		return ProductCreateResponseV1.builder()
-			.productId(product.getProductId())
-			.productName(product.getName())
-			.brandName(product.getBrandName())
-			.categoryId(product.getCategoryId())
-			.options(product.getOptions().stream()
+			.productInfo(new ProductCreateResponseV1.ProductInfoResponse(
+				model.getProduct().getProductId(),
+				model.getProduct().getName(),
+				model.getProduct().getBrandName(),
+				model.getProduct().getCategoryId()
+			))
+			.options(model.getOptions().stream()
 				.map(o -> new ProductCreateResponseV1.OptionResponseV1(
 					o.getOptionId(),
-					o.getModelNumber(),
+					o.getModelId(),
 					o.getSize(),
-					o.getColor(),
-					o.getThumbnailUrl(),
-					o.getDetails(),
 					o.isInStock(),
 					new ProductCreateResponseV1.MinStockResponse(
 						o.getMinimumPriceStock().getStockId(),
@@ -84,9 +82,9 @@ public class ProductMapper {
 			.build();
 	}
 
-	public static ProductGetResponseV1 toProductGetResponseV1(Product product) {
+	public static ProductGetResponseV1 toProductGetResponseV1(Model model) {
 
-		List<ProductGetResponseV1.ProductGetResponseOption> mappedOptions = product.getOptions().stream()
+		List<ProductGetResponseV1.ProductGetResponseOption> mappedOptions = model.getOptions().stream()
 			.map(option -> {
 
 				MinimumPriceStock stock = option.getMinimumPriceStock();
@@ -101,20 +99,16 @@ public class ProductMapper {
 
 				return new ProductGetResponseV1.ProductGetResponseOption(
 					option.getOptionId(),
-					option.getModelNumber(),
 					option.getSize(),
-					option.getColor(),
-					option.getThumbnailUrl(),
-					option.getDetails(),
 					minStockRes
 				);
 			})
 			.toList();
 
 		return ProductGetResponseV1.builder()
-			.productId(product.getProductId())
-			.productName(product.getName())
-			.brandName(product.getBrandName())
+			.productId(model.getProduct().getProductId())
+			.productName(model.getProduct().getName())
+			.brandName(model.getProduct().getBrandName())
 			.options(mappedOptions)
 			.build();
 	}
@@ -129,25 +123,25 @@ public class ProductMapper {
 			.build();
 	}
 
-	public static StockCancelResponseV1 toStockCancelResponseV1(ProductErrorCode failReason, List<UUID> stockIds) {
-		return StockCancelResponseV1.builder()
-			.errorCode(failReason.getMessage()
-				.substring(0, 4))
-			.message(failReason.getMessage()
-				.substring(7))
-			.stockIds(stockIds)
-			.build();
-	}
+	// public static StockCancelResponseV1 toStockCancelResponseV1(ProductErrorCode failReason, List<UUID> stockIds) {
+	// 	return StockCancelResponseV1.builder()
+	// 		.errorCode(failReason.getMessage()
+	// 			.substring(0, 4))
+	// 		.message(failReason.getMessage()
+	// 			.substring(7))
+	// 		.stockIds(stockIds)
+	// 		.build();
+	// }
 
-	public static ProductInfosGetResponseV1 toProductInfosGetResponseV1(Product product, Option option, Stock stock) {
+	public static ProductInfosGetResponseV1 toProductInfosGetResponseV1(Model model, Option option, Stock stock) {
 		return ProductInfosGetResponseV1.builder()
-			.productId(product.getProductId())
+			.productId(model.getProduct().getProductId())
 			.optionId(option.getOptionId())
 			.stockId(stock.getId())
 			.productType("RESELL")
-			.productName(product.getName())
-			.brandName(product.getBrandName())
-			.productColor(option.getColor())
+			.productName(model.getProduct().getName())
+			.brandName(model.getProduct().getBrandName())
+			.productColor(model.getColor())
 			.productSize(option.getSize())
 			.productPrice(stock.getPrice())
 			.sellerId(stock.getSellerId())
