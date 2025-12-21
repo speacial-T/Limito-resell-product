@@ -181,6 +181,9 @@ public class ProductMapper {
 
 	public static OptionInfosGetResponseV1 toOptionInfosGetResponseV1(Model model, Option option) {
 		return OptionInfosGetResponseV1.builder()
+			.productId(model.getProduct().getProductId())
+			.optionId(option.getOptionId())
+			.stockId(option.getMinimumPriceStock().getStockId())
 			.productType("RESELL")
 			.productName(model.getProduct().getName())
 			.brandName(model.getProduct().getBrandName())
