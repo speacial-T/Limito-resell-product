@@ -3,8 +3,10 @@ package com.limito.limitoresellproduct.presentation.dto.response;
 import java.util.UUID;
 
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
+@Getter
 public class OptionInfosGetResponseV1 {
 	private UUID optionId;
 	private UUID stockId;
