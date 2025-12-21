@@ -17,11 +17,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "p_resell_product_options")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Option extends BaseEntity {
