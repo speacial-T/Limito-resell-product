@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:19095}
+  port: ${RESELL_PRODUCT_PORT:19095}
 
 spring:
 
@@ -11,8 +11,8 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:limito-db}
@@ -32,11 +32,11 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:${EUREKA_SERVER_PORT:19090}/eureka/
     register-with-eureka: true
     fetch-registry: true
   instance:
-    hostname: localhost
+    hostname: ${RESELL_PRODUCT_HOST:localhost}
     prefer-ip-address: true
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
