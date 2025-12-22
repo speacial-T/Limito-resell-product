@@ -16,7 +16,7 @@ import com.limito.limitoresellproduct.presentation.advice.ProductErrorCode;
 import com.limito.limitoresellproduct.presentation.dto.request.ProductCreateRequestV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
-import com.limito.limitoresellproduct.presentation.dto.response.ProductReadResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.ProductsGetResponseV1;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +44,9 @@ public class ResellProductService {
 		product.changeMinimumPriceStock(optionId, minimumPriceStock);
 	}
 
-	public ProductReadResponseV1 getProducts(UUID categoryId, Pageable pageable) {
+	public ProductsGetResponseV1 getProducts(UUID categoryId, Pageable pageable) {
 		Page<Product> products = resellProductRepository.findAllByCategoryIdForAllUser(categoryId, pageable);
-		return ProductReadResponseV1.of(categoryId, products);
+		return ProductMapper.toProductsGetResponseV1(categoryId, products);
 	}
 
 	public ProductGetResponseV1 getProduct(UUID resellProductId) {
@@ -68,6 +68,6 @@ public class ResellProductService {
 		if (option == null) {
 			throw new AppException(ProductErrorCode.WRONG_OPTION_ID);
 		}
-		option.checkActive();
+		option.validateActive();
 	}
 }

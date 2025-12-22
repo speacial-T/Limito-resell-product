@@ -3,6 +3,9 @@ package com.limito.limitoresellproduct.infrastructure.persistence.mapper;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Component;
 
 import com.limito.limitoresellproduct.domain.model.Product;
@@ -15,6 +18,7 @@ import com.limito.limitoresellproduct.presentation.dto.request.StockCreateReques
 import com.limito.limitoresellproduct.presentation.dto.response.ProductCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.ProductInfosGetResponseV1;
+import com.limito.limitoresellproduct.presentation.dto.response.ProductsGetResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCancelResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockCreateResponseV1;
 import com.limito.limitoresellproduct.presentation.dto.response.StockReduceResponseV1;
@@ -106,6 +110,7 @@ public class ProductMapper {
 					option.getColor(),
 					option.getThumbnailUrl(),
 					option.getDetails(),
+					option.isInStock(),
 					minStockRes
 				);
 			})
@@ -151,6 +156,46 @@ public class ProductMapper {
 			.productSize(option.getSize())
 			.productPrice(stock.getPrice())
 			.sellerId(stock.getSellerId())
+			.build();
+	}
+
+	public static ProductsGetResponseV1 toProductsGetResponseV1(UUID categoryId, Page<Product> products) {
+		List<ProductsGetResponseV1.ProductGetResponse> content =
+			products.getContent().stream()
+				.flatMap(product ->
+					product.getOptions().stream()
+						.map(option -> {
+							MinimumPriceStock stock = option.getMinimumPriceStock();
+
+							return new ProductsGetResponseV1.ProductGetResponse(
+								product.getProductId(),
+								product.getName(),
+								product.getBrandName(),
+								option.getOptionId(),
+								option.getModelNumber(),
+								option.getColor(),
+								option.getSize(),
+								option.getThumbnailUrl(),
+								option.getDetails(),
+								option.isInStock(),
+								stock.getStockId(),
+								stock.getPrice()
+							);
+						})
+				)
+				.toList();
+
+		Page<ProductsGetResponseV1.ProductGetResponse> mapped =
+			new PageImpl<>(
+				content,
+				products.getPageable(),
+				content.size()
+			);
+
+		return ProductsGetResponseV1.builder()
+			.categoryId(categoryId)
+			.category("임시 카테고리명")
+			.products(new PagedModel<>(mapped))
 			.build();
 	}
 }

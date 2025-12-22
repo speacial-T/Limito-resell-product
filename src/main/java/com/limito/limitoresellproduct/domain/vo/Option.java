@@ -119,7 +119,7 @@ public class Option {
 	}
 
 	public void changeMinimumPriceStock(MinimumPriceStock newMinStock) {
-		this.minimumPriceStock = newMinStock;
+		setMinimumPriceStock(newMinStock);
 
 		if (newMinStock != null) {
 			this.inStock = true;
@@ -133,6 +133,6 @@ public class Option {
 		return this.optionId.equals(optionId);
 	}
 
-	public void checkActive() {
+	public void validateActive() {
 	}
 }
