@@ -18,16 +18,16 @@ jobs:
           distribution: 'temurin'
 
       - name: 파일 전송을 위한 디렉토리 생성
-        run: mkdir ./board-app
+        run: mkdir ./resell-product-app
 
       - name: Gradle Build
         run: ./gradlew clean build
 
       - name: Archive 파일명 변경
-        run: mv ./build/libs/*SNAPSHOT.jar ./board-app/app.jar
+        run: mv ./build/libs/*SNAPSHOT.jar ./resell-product-app/app.jar
 
       - name: github secrets에 저장된 ENV_PROPERTIES를 읽어서 .env 생성
-        run: echo "${{ secrets.ENV_PROPERTIES }}" > ./board-app/.env
+        run: echo "${{ secrets.ENV_PROPERTIES }}" > ./resell-product-app/.env
 
       - name: .env와 app.jar를 ec2에 전송
         uses: appleboy/scp-action@v1
@@ -35,7 +35,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PEM_KEY }}
-          source: ./board-app
+          source: ./resell-product-app
           target: /home/ec2-user/deploy
 
       - name: SSH를 통해 EC2에 접속 후 서비스 재 시작
@@ -45,10 +45,10 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PEM_KEY }}
           script: |
-            rm -rf /home/ec2-user/board-app
-            mkdir /home/ec2-user/board-app
-            mv /home/ec2-user/deploy/board-app /home/ec2-user
-            cd /home/ec2-user/board-app
-            sudo fuser -k -n tcp 8080 || true
-            nohup java -jar /home/ec2-user/board-app/app.jar > application-log 2>&1 &
+            rm -rf /home/ec2-user/resell-product-app
+            mkdir /home/ec2-user/resell-product-app
+            mv /home/ec2-user/deploy/resell-product-app /home/ec2-user
+            cd /home/ec2-user/resell-product-app
+            sudo fuser -k -n tcp 19095 || true
+            nohup java -jar /home/ec2-user/resell-product-app/app.jar > application-log 2>&1 &
             rm -rf /home/ec2-user/deploy
